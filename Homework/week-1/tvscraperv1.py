@@ -1,3 +1,10 @@
+##
+# VERSIE 1 VAN DIT BESTAND
+# NIET DE DEFINITIEVE VERSIE
+# DEZE NIET NAKIJKEN
+# DEFINITIEVE VERSIE OPGESLAGEN ONDER tvscraper.py
+##
+
 #!/usr/bin/env python
 # Name: Leslie Dao
 # Student number: 10561234
