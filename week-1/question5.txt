@@ -1,1 +1,0 @@
-Branches are a test environment to experiment with new ideas which do not affect the master branch. It won't be merged until it is ready to be reviewed.
