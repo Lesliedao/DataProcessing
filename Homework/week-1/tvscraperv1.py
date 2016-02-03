@@ -82,20 +82,10 @@ def extract_tvseries(dom):
     	runtime = runtime.content
     	runtime = runtime[:runtime.find(" ")]
     	scrape.append(runtime)
-    
-    array = []	
-    for i in range(50):
-    	tvserie = []
-    	tvserie.append(scrape[i])
-    	tvserie.append(scrape[i + 50])
-    	tvserie.append(scrape[i + 100])
-    	tvserie.append(scrape[i + 150])
-    	tvserie.append(scrape[i + 200])
-    	array.append(tvserie)
-    
+    	
     #print scrape
     #print len(scrape)
-    return array  # replace this line as well as appropriate
+    return scrape  # replace this line as well as appropriate
 
 
 def save_csv(f, tvseries):
@@ -105,7 +95,8 @@ def save_csv(f, tvseries):
     writer = csv.writer(f)
     writer.writerow(['Title', 'Ranking', 'Genre', 'Actors', 'Runtime'])
     for i in range(50):
-    	writer.writerow(tvseries[i])
+    	row = [tvseries[i], tvseries[i + 50], tvseries[i + 100], tvseries[i + 150], tvseries[i + 200]]
+    	writer.writerow(row)
     	
     # ADD SOME CODE OF YOURSELF HERE TO WRITE THE TV-SERIES TO DISK
 
