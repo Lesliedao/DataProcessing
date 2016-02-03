@@ -2,9 +2,8 @@
 # Name: Leslie Dao
 # Student number: 10561234
 '''
-This script scrapes IMDB and outputs a CSV file with highest ranking tv series.
+Dit script scrapet informatie van de IMDb website en schrijft de 50 beste TV series naar een .csv bestand
 '''
-# IF YOU WANT TO TEST YOUR ATTEMPT, RUN THE test-tvscraper.py SCRIPT.
 import csv
 
 from pattern.web import URL, DOM
@@ -31,70 +30,97 @@ def extract_tvseries(dom):
     # NOTE: FOR THIS EXERCISE YOU ARE ALLOWED (BUT NOT REQUIRED) TO IGNORE
     # UNICODE CHARACTERS AND SIMPLY LEAVE THEM OUT OF THE OUTPUT.
     
+	# Maak een lege list aan om de informatie in op te slaan
     scrape = []
 
-	# scrape de titels van de series
+	# Scrape de titels van de series
+	# De plaatjes hebben een attribute "title" met de titel en jaar als value
     for img in dom.by_tag("img"):
     	title = img.attrs.get("title","")
-    	title = title.encode("utf-8")	
+		# Als de titels unicode bevatten, encode deze dan zodat ze goed weergegeven worden
+    	title = title.encode("utf-8")
+		# De titel zonder het achtervoegsel (20XX TV Series) of trailing spatie
     	title = title[:title.find("(") - 1]
-    	if title == "":
+    	# Als het veld leeg was, was het geen titel dus laat deze weg
+        if title == "":
     		pass
+		# Anders append de titel aan de lege list
     	else:
     		scrape.append(title)
     
-    # het eerste element van de list is "Go to IMDb Pro"	
+    # Het eerste element van de list is "Go to IMDb Pro", dus verwijder deze	
     scrape.pop(0)
     
-    # scrape de rankings van de series
-    for span in dom.by_class("value"):
-    	span = span.content.encode("utf-8")
-    	scrape.append(span)
+    # Scrape de rankings van de series
+	# De rankings zitten tussen de tags met class "value"
+    for rank in dom.by_class("value"):
+		# Gebruik de content method om wat er tussen de tags zit te parsen en append het aan scrape
+    	rank = rank.content.encode("utf-8")
+    	scrape.append(rank)
     
-    # scrape de genres
+    # Scrape de genres
     for genres in dom.by_class("genre"):
+		# Houd een lijst bij voor als een serie meerdere genres heeft
     	genlist = []
+		# Maak een DOM van de content van genres om daarin apart de tags te accessen
     	genres = DOM(genres.content)
+		# Sommige series hebben meerdere genres dus parse ze apart
     	for genre in genres:
+			# De genres-DOM neemt ook niet-tags mee, dus houd hier rekening mee met try/except
+			# Als het om een tag gaat, append deze inhoud dan aan de genlist
     		try:
     			genlist.append(genre.content.encode("utf-8"))
+			# Anders sla over (er hoeft niks geparset te worden)
     		except AttributeError:
     			pass
-    			
+    	
+		# Voeg de geparste genres uit de genlist samen in een string en append ze aan scrape
     	genres = ", ".join(genlist)
     	scrape.append(genres)
     	
-    # scrape de acteurs
+    # Scrape de acteurs
+	# De acteurs zitten in de span met de class "credit"
     for actors in dom.by_class("credit"):
+		# Maak net als bij de genres een lijst voor meerdere acteurs
     	actorlist = []
+		# Maak weer een DOM van de acteurs zodat de tags daarin apart bekeken kunnen worden
     	actors = DOM(actors.content)
+		# Probeer de acteurs apart te parsen en sla over als het niet om een tag gaat
     	for actor in actors:
     		try:
     			actorlist.append(actor.content.encode("utf-8"))
     		except AttributeError:
     			pass
     	
+		# Voeg de acteurs uit de actorlist samen in een string en append ze aan scrape
     	actors = ", ".join(actorlist)
     	scrape.append(actors)
     
-    # scrape de runtimes
+    # Scrape de runtimes
+	# De runtimes staan tussen tags met class "runtime"
     for runtime in dom.by_class("runtime"):
     	runtime = runtime.content
-    	runtime = runtime[:runtime.find(" ")]
+		# Pak alleen het getal en niet "mins." door te splicen, encode en append aan scrape
+    	runtime = runtime[:runtime.find(" ")].encode("utf-8")
     	scrape.append(runtime)
     
+	# Omdat een grote array niet door de test komt, hoewel de output .csv file exact hetzelfde is,
+	# maak nieuwe array voor nested lists. Elke serie krijgt zijn eigen list in deze nieuwe list
     array = []	
+    # Er wordt gekeken naar de 50 beste series, dus er zijn 50 lists in de nieuwe list
     for i in range(50):
+		# Nested list voor elke serie
     	tvserie = []
+		# Append de titel, ranking, genres, acteurs en runtime van de serie. Ze staan 50 elementen uit elkaar
     	tvserie.append(scrape[i])
     	tvserie.append(scrape[i + 50])
     	tvserie.append(scrape[i + 100])
     	tvserie.append(scrape[i + 150])
     	tvserie.append(scrape[i + 200])
+		# Append deze list aan de grote list
     	array.append(tvserie)
     
-    #print scrape
-    #print len(scrape)
+	# Return de nested lists
     return array  # replace this line as well as appropriate
 
 
@@ -104,6 +130,8 @@ def save_csv(f, tvseries):
     '''
     writer = csv.writer(f)
     writer.writerow(['Title', 'Ranking', 'Genre', 'Actors', 'Runtime'])
+	# Schrijf 50 rows naar de .csv file
+	# Omdat de tvseries list een nested list is, kan elke index als row geschreven worden
     for i in range(50):
     	writer.writerow(tvseries[i])
     	
