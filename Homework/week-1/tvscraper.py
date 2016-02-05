@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # Name: Leslie Dao
 # Student number: 10561234
+# De indents op GitHub zijn anders dan in een tekstverwerker
+# In een tekstverwerker staat de comments recht boven de bijhorende code
 '''
 Dit script scrapet informatie van de IMDb website en schrijft de 50 beste TV series naar een .csv bestand
 '''
