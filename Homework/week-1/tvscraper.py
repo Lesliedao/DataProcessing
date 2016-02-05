@@ -58,7 +58,11 @@ def extract_tvseries(dom):
     for rank in dom.by_class("value"):
 		# Gebruik de content method om wat er tussen de tags zit te parsen en append het aan scrape
     	rank = rank.content.encode("utf-8")
-    	scrape.append(rank)
+    	# Als de rating mist, append dan "N/A"
+    	if rank == "":
+    		scrape.append("N/A")
+    	else:
+    		scrape.append(rank)
     
     # Scrape de genres
     for genres in dom.by_class("genre"):
@@ -78,7 +82,11 @@ def extract_tvseries(dom):
     	
 		# Voeg de geparste genres uit de genlist samen in een string en append ze aan scrape
     	genres = ", ".join(genlist)
-    	scrape.append(genres)
+    	# Als de genres missen, append dan "None"
+    	if genres == "":
+    		scrape.append("None")
+    	else:
+    		scrape.append(genres)
     	
     # Scrape de acteurs
 	# De acteurs zitten in de span met de class "credit"
@@ -96,19 +104,27 @@ def extract_tvseries(dom):
     	
 		# Voeg de acteurs uit de actorlist samen in een string en append ze aan scrape
     	actors = ", ".join(actorlist)
-    	scrape.append(actors)
+    	# Als de acteurs missen, append dan "None"
+    	if actors == "":
+    		scrape.append("None")
+    	else:
+    		scrape.append(actors)
     
     # Scrape de runtimes
 	# De runtimes staan tussen tags met class "runtime"
     for runtime in dom.by_class("runtime"):
     	runtime = runtime.content
 		# Pak alleen het getal en niet "mins." door te splicen, encode en append aan scrape
+		# Als de runtime mist, vul dan -1 in
     	runtime = runtime[:runtime.find(" ")].encode("utf-8")
-    	scrape.append(runtime)
+    	if runtime == "":
+    		scrape.append("-1")
+    	else:
+    		scrape.append(runtime)
     
 	# Omdat een grote array niet door de test komt, hoewel de output .csv file exact hetzelfde is,
 	# maak nieuwe array voor nested lists. Elke serie krijgt zijn eigen list in deze nieuwe list
-    array = []	
+    allseries = []	
     # Er wordt gekeken naar de 50 beste series, dus er zijn 50 lists in de nieuwe list
     for i in range(50):
 		# Nested list voor elke serie
@@ -119,11 +135,11 @@ def extract_tvseries(dom):
     	tvserie.append(scrape[i + 100])
     	tvserie.append(scrape[i + 150])
     	tvserie.append(scrape[i + 200])
-		# Append deze list aan de grote list
-    	array.append(tvserie)
+		# Append deze list aan de grote list voor nested lists
+    	allseries.append(tvserie)
     
 	# Return de nested lists
-    return array  # replace this line as well as appropriate
+    return allseries  # replace this line as well as appropriate
 
 
 def save_csv(f, tvseries):
