@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# Name:
-# Student number:
+# Name: Leslie Dao
+# Student number: 10561234
 '''
 This script crawls the IMDB top 250 movies.
 '''
