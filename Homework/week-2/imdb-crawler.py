@@ -213,9 +213,15 @@ def scrape_top_250(url):
     movie_urls = []
     # YOUR SCRAPING CODE GOES HERE, ALL YOU ARE LOOKING FOR ARE THE ABSOLUTE
     # URLS TO EACH MOVIE'S IMDB PAGE, ADD THOSE TO THE LIST movie_urls.
-
-
-
+    html = url.download()
+    dom = DOM(html)
+    root = 'http://www.imdb.com'
+    
+    for movie in dom.by_class("titleColumn"):
+        movieinfo = DOM(movie.content)
+        movie_urls.append(root + movieinfo.by_tag("a")[0].attrs.get("href",""))
+        
+                    
     # return the list of URLs of each movie's page on IMDB
     return movie_urls
 
@@ -236,8 +242,90 @@ def scrape_movie_page(dom):
         of ratings.
     '''
     # YOUR SCRAPING CODE GOES HERE:
-
-
+    # Scrape titel
+    titleinfo = DOM(dom.by_id("ratingWidget").content)
+    title = titleinfo.by_tag("strong")[0].content
+    
+    # Scrape de runtime in minuten
+    time = dom.by_tag("time")[0].content
+    runtime = time.strip(' \t\r\n').split(" ")
+    hours = int(runtime[0][:runtime[0].find("h")])
+    try:
+        minutes = int(runtime[1][:runtime[1].find("m")])
+    except IndexError:
+        minutes = 0
+    
+    duration = str(60 * hours + minutes)
+    
+    # Scrape de genres
+    genrelist = []
+    genreinfo = DOM(dom.by_class("see-more inline canwrap")[1].content)
+    for gen in genreinfo.by_tag("a"):
+        genre = gen.content[1:]
+        genrelist.append(genre)
+        
+    genres = "; ".join(genrelist)
+    
+    # Scrape de regisseurs
+    directorlist = []
+    dirinfo = DOM(dom.by_class("credit_summary_item")[0].content)
+    i = 0
+    for dir in dirinfo.by_tag("span"):
+        i += 1
+        if i % 2 == 0:
+            directorlist.append(dir.content)
+        else:
+            pass
+            
+    directors = "; ".join(directorlist)
+    
+    # Scrape de schrijvers
+    writerlist = []
+    wrtinfo = DOM(dom.by_class("credit_summary_item")[1].content)
+    i = 0
+    for wrt in wrtinfo.by_tag("span"):
+        i += 1
+        if i % 2 == 0:
+            writerlist.append(wrt.content)
+        else:
+            pass
+            
+    writers = "; ".join(writerlist)
+    
+    # Scrape de eerste drie vermelde acteurs
+    actorlist = []
+    actinfo = DOM(dom.by_class("credit_summary_item")[2].content)
+    i = 0
+    for act in actinfo.by_tag("span"):
+        i += 1
+        if i % 2 == 0:
+            if act.content == "":
+                pass
+            else:
+                actorlist.append(act.content)
+        else:
+            pass
+            
+    actors = "; ".join(actorlist)
+    
+    # Scrape de rating
+    rtg = dom.by_tag('span.rating')[0].content
+    rating = rtg[:rtg.find("<")]
+    
+    # Scrape het aantal ratings
+    n_rtgs = dom.by_tag('span.small')[0].content
+    n_ratings = "".join(x for x in n_rtgs if x.isdigit() == True)
+        
+    # TEST PRINTS
+    print title
+    print duration
+    print genres
+    print directors
+    print writers
+    print actors
+    print rating
+    print n_ratings
+    
     # Return everything of interest for this movie (all strings as specified
     # in the docstring of this function).
     return title, duration, genres, directors, writers, actors, rating, \
