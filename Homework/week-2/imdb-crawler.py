@@ -213,18 +213,50 @@ def scrape_top_250(url):
     movie_urls = []
     # YOUR SCRAPING CODE GOES HERE, ALL YOU ARE LOOKING FOR ARE THE ABSOLUTE
     # URLS TO EACH MOVIE'S IMDB PAGE, ADD THOSE TO THE LIST movie_urls.
+    
+    # Pak de html van de url en maak er een DOM van
     html = url.download()
     dom = DOM(html)
+    # Elke url begint met deze root, deze root is nodig voor het absolute pad
     root = 'http://www.imdb.com'
     
+    # De url van elke film zit in een td tag met class titleColumn
     for movie in dom.by_class("titleColumn"):
+    	# Maak een DOM van de inhoud tussen de td tags om daarin te kunnen zoeken
         movieinfo = DOM(movie.content)
+        # Het relatieve pad van elke film is de waarde van 'href' van de eerste 'a' tag
+        # Concatenate de root en het relatieve pad voor het absolute pad en append aan movie_urls
         movie_urls.append(root + movieinfo.by_tag("a")[0].attrs.get("href",""))
         
                     
     # return the list of URLs of each movie's page on IMDB
     return movie_urls
 
+# NIEUWE FUNCTIE
+def scrape_credit_summary(index, dom):
+	# Maak een lege list aan om de info in op te slaan
+	infolist = []
+	
+	# Het inputargument index geeft aan naar welke info gekeken wordt:
+	# 0: regisseurs
+	# 1: schrijvers
+	# 2: eerste drie vermelde acteurs
+	infodom = DOM(dom.by_class("credit_summary_item")[index].content)
+	# Maak een hulpvariabele i aan
+    # Tussen elk van de div tags staan span tags met info over de regisseurs, schrijvers en acteurs
+    # Alleen de 'even' span tags bevatten geisoleerde namen
+    # Append dus alleen de inhoud van een span tag als het een even span tag is, oftewel
+    # als i % 2 == 0
+	i = 0
+	for info in infodom.by_tag("span"):
+		i += 1
+		if i % 2 == 0:
+			infolist.append(info.content)
+		else:
+			pass
+	
+	# Geef de list met info terug
+	return infolist
 
 def scrape_movie_page(dom):
     '''
@@ -243,88 +275,88 @@ def scrape_movie_page(dom):
     '''
     # YOUR SCRAPING CODE GOES HERE:
     # Scrape titel
+    # Maak een DOM van de inhoud van de div met id 'ratingWidget'
     titleinfo = DOM(dom.by_id("ratingWidget").content)
+    # De titel van de film staat in strong tags
     title = titleinfo.by_tag("strong")[0].content
     
     # Scrape de runtime in minuten
+    # De runtime in uren en minuten staat in de eerste 'time' tag
     time = dom.by_tag("time")[0].content
+    # Strip de inhoud van die tag zodat er geen leading of trailing spaces zijn en split deze naar uren en minuten
     runtime = time.strip(' \t\r\n').split(" ")
-    hours = int(runtime[0][:runtime[0].find("h")])
-    try:
-        minutes = int(runtime[1][:runtime[1].find("m")])
-    except IndexError:
-        minutes = 0
+    # Probeer in het eerste element te zoeken naar de index van 'h'
+    # Als deze niet te vinden is, returnt de find method -1 en duurt de film dus niet langer dan een uur
+    hindex = runtime[0].find("h")
+    if hindex == -1:
+    	# De film duurt niet langer dan een uur, dus zoek naar de index van 'm'
+    	# Er is in dit geval geen tweede element
+    	hours = 0
+    	minutes = int(runtime[0][:runtime[0].find("m")])
+    else:
+    	# Als de index van 'h' is gevonden, slice de string dan zodat de 'h' niet meegenomen wordt
+    	# Dit is het aantal uren; maak daar een integer van
+    	hours = int(runtime[0][:hindex])
+    	# Alleen als de film minstens een uur duurt, kan runtime een tweede element hebben
+    	# Probeer de index van 'm' te zoeken in dit tweede element en de string te slicen
+    	# zodat de 'm' niet meegenomen wordt. Dit is het aantal minuten; maak daar een integer van
+    	# Als het tweede element niet bestaat, is er een IndexError en is het aantal minuten dus 0
+    	try:
+        	minutes = int(runtime[1][:runtime[1].find("m")])
+    	except IndexError:
+        	minutes = 0
     
+    # Bereken de runtime in minuten zonder de ' mins.' suffix en maak daar een string van
     duration = str(60 * hours + minutes)
     
     # Scrape de genres
+    # Maak een lege list voor de genres om later te joinen in een string
     genrelist = []
+    # De genres staan tussen div tags met class 'see-more inline canwrap'. Daar zijn er twee van
+    # De eerste bevat plot keywords en de tweede de genres. Kijk dus naar de tweede
+    # Maak een DOM van de inhoud van die div tag
     genreinfo = DOM(dom.by_class("see-more inline canwrap")[1].content)
+    # In die DOM staan de genres tussen 'a' tags. Itereer daarover
     for gen in genreinfo.by_tag("a"):
+    	# De genres staan tussen de tags en worden voorafgegaan door een spatie
+    	# Slice de genre dus zodat de leading space niet wordt meegenomen en append aan genrelist
         genre = gen.content[1:]
         genrelist.append(genre)
-        
+    
+    # Maak een string van de gevonden genres en splits de genres met '; '    
     genres = "; ".join(genrelist)
     
+    # Er zijn drie div tags met class 'credit_summary_item'
+    # De eerste (0) daarvan bevat de regisseurs
+    # De tweede (1) bevat de schrijvers
+    # De laatste (2) bevat de eerste drie vermelde acteurs
+    # Zie de functie scrape_credit_summary(index, dom) (hierboven) voor meer info
+    
     # Scrape de regisseurs
-    directorlist = []
-    dirinfo = DOM(dom.by_class("credit_summary_item")[0].content)
-    i = 0
-    for dir in dirinfo.by_tag("span"):
-        i += 1
-        if i % 2 == 0:
-            directorlist.append(dir.content)
-        else:
-            pass
-            
-    directors = "; ".join(directorlist)
+    # Maak een string van de gevonden regisseurs en splits de regisseurs met '; '        
+    directors = "; ".join(scrape_credit_summary(0, dom))
     
     # Scrape de schrijvers
-    writerlist = []
-    wrtinfo = DOM(dom.by_class("credit_summary_item")[1].content)
-    i = 0
-    for wrt in wrtinfo.by_tag("span"):
-        i += 1
-        if i % 2 == 0:
-            writerlist.append(wrt.content)
-        else:
-            pass
-            
-    writers = "; ".join(writerlist)
+	# Maak een string van de gevonden schrijvers en splits de schrijvers met '; '
+    writers = "; ".join(scrape_credit_summary(1, dom))
     
     # Scrape de eerste drie vermelde acteurs
-    actorlist = []
-    actinfo = DOM(dom.by_class("credit_summary_item")[2].content)
-    i = 0
-    for act in actinfo.by_tag("span"):
-        i += 1
-        if i % 2 == 0:
-            if act.content == "":
-                pass
-            else:
-                actorlist.append(act.content)
-        else:
-            pass
-            
-    actors = "; ".join(actorlist)
+    # Maak een string van de eerste drie vermelde acteurs, gesplitst door '; '
+    actors = "; ".join(scrape_credit_summary(2, dom))
     
     # Scrape de rating
+    # De rating staat tussen span tags met class 'rating'
     rtg = dom.by_tag('span.rating')[0].content
+    # Omdat de rating direct gevolgd wordt door een andere tag (beginnend met <),
+    # slice de string zodat hij alleen de rating returnt
     rating = rtg[:rtg.find("<")]
     
     # Scrape het aantal ratings
+    # De ratingcount staat tussen span tags met class 'small'
     n_rtgs = dom.by_tag('span.small')[0].content
+    # Omdat de ratingcount komma's bevat die de duizendtallen splitst,
+    # maak een nieuwe string mbv een list comprehension die alleen de getallen joint
     n_ratings = "".join(x for x in n_rtgs if x.isdigit() == True)
-        
-    # TEST PRINTS
-    print title
-    print duration
-    print genres
-    print directors
-    print writers
-    print actors
-    print rating
-    print n_ratings
     
     # Return everything of interest for this movie (all strings as specified
     # in the docstring of this function).
