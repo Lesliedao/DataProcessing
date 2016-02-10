@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Name: Leslie Dao
 # Student number: 10561234
+# De indentaties in github kunnen weer verschillen van de indentaties in een tekstverwerker
 '''
 This script crawls the IMDB top 250 movies.
 '''
