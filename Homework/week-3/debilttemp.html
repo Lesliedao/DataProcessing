@@ -371,8 +371,8 @@
     2015/12/28,   89
     2015/12/29,   75
     2015/12/30,   69
-    2015/12/31,   78</textarea>
-    <canvas id="graph" width="150" height="150">tekst</canvas>
+    2015/12/31,   78</textarea><br><br>
+    <canvas id="graph" width="1000" height="500">Deze browser support canvas niet</canvas>
     <script>
     /*
     / Leslie Dao
@@ -430,12 +430,116 @@
     }
     
     //var transform = createTransform([10, 20], [10, 20]);
-    //console.log(transform(15));
+    //console.log(transform(10));
     
+    // Voorwerk
     var canvas = document.getElementById('graph');
     var ctx = canvas.getContext('2d');
-    ctx.fillStyle = "rgb(20,60,0)";
-    ctx.fillRect(10,10,75,50);
+    
+    var xCoords = [];
+    var yCoords = [];
+    
+    // Bereken hoeveel milliseconden er in een dag zijn
+    var msPerDay = dates[1].getTime() - dates[0].getTime();
+    //console.log(msPerDay);
+    
+    // Bepaal de minimum en maximum temperatuur (gemiddeld)
+    var minTemp = Math.min.apply(Math, avgTemps);
+    var maxTemp = Math.max.apply(Math, avgTemps);
+    var padding = 60;
+    var offset = 10;
+    //console.log(minTemp);
+    //console.log(maxTemp);
+    
+    // Maak transformfuncties aan
+    var xTransform = createTransform([1, 365], [padding + offset, canvas.width]);
+    var yTransform = createTransform([minTemp, maxTemp], [0, canvas.height - padding - offset]);
+    
+    //console.log(xTransform(15));
+    //console.log(yTransform(15));
+    
+    // Bereken de getransformeerde x- en y-coordinaten
+    for (var i = 0; i < dates.length; i++)
+    {
+        yCoords.push(canvas.height - padding - yTransform(avgTemps[i]));
+        xCoords.push(xTransform((dates[i].getTime() - dates[0].getTime()) / msPerDay + 1));
+    }
+    
+    //console.log(xCoords);
+    //console.log(yCoords);
+
+    // Teken de grafiek
+    ctx.beginPath();
+    ctx.moveTo(xCoords[0], yCoords[0]);
+    for (var i = 1; i < xCoords.length; i++)
+    {
+        if (avgTemps[i] >= 160)
+        {
+            ctx.strokeStyle = "#FF0000";
+        }
+        else if (avgTemps[i] >= 60)
+        {
+            ctx.strokeStyle = "#15FF00";
+        }
+        else
+        {
+            ctx.strokeStyle = "#0900FF";
+        }
+        ctx.lineTo(xCoords[i], yCoords[i]);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(xCoords[i], yCoords[i]);
+    }
+    ctx.strokeStyle = "#000000";
+    
+    // Teken de y-as
+    ctx.beginPath();
+    ctx.moveTo(padding, 0);
+    ctx.lineTo(padding, canvas.height - padding);
+    ctx.stroke();
+    
+    // Teken de x-as
+    ctx.beginPath();
+    ctx.moveTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width, canvas.height - padding);
+    ctx.stroke();
+    ctx.closePath();
+    
+    // x-as labels
+    ctx.fillStyle = "#444444";
+    ctx.font = "normal normal 11px Helvetica";
+    
+    // Geen schrikkeljaar
+    var firstDayOfTheMonth = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    var months = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+    
+    for (var i = 0; i < months.length; i++)
+    {
+        ctx.beginPath();
+        ctx.moveTo(xCoords[firstDayOfTheMonth[i]], canvas.height - padding);
+        ctx.lineTo(xCoords[firstDayOfTheMonth[i]], canvas.height - padding + offset / 2);
+        ctx.stroke();
+        ctx.save();
+        ctx.translate(xCoords[firstDayOfTheMonth[i]], canvas.height - padding + offset);
+        ctx.rotate(-Math.PI / 4);
+        ctx.textAlign = "right";
+        ctx.fillText(months[i], 0, 0);
+        ctx.restore();
+    }
+    
+    ctx.font = "normal normal 14px Helvetica";
+    // y-as labels
+    for (var i = 0; i < 15; i++)
+    {
+        ctx.beginPath();
+        ctx.moveTo(padding, yTransform(-20 + 20 * i));
+        ctx.lineTo(padding - offset / 2, yTransform(-20 + 20 * i));
+        ctx.stroke();
+        ctx.textAlign = "right";
+        ctx.fillText(-20 + 20 * i, padding - offset, canvas.height - padding - yTransform(-20 + 20 * i) + offset / 2);
+    }
+    
+    
     </script>
   </body>
 </html>
