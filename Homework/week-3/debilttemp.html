@@ -538,16 +538,17 @@
     
     var canvasDim = canvas.getBoundingClientRect();
     var dataX = createTransform([0, canvasDim.right - canvasDim.left - padding - offset], [1, 365]);
-    
+    console.log(canvasDim);
     
     var tooltipTimer;
     function mousemove(event)
     {
         var crosshairX = event.clientX - canvasDim.left - padding - offset;
+        console.log(event.clientY);
         if (dataX(crosshairX) < 1)
         {
             clearTimeout(tooltipTimer);
-            console.log(1 + ", " + avgTemps[0] + "; " + xTransform(1) + ", " + yTransform(avgTemps[0]));
+            //console.log(1 + ", " + avgTemps[0] + "; " + xTransform(1) + ", " + yTransform(avgTemps[0]));
             ovc.clearRect(0, 0, overCanvas.width, overCanvas.height);
             ovc.beginPath();
             ovc.moveTo(xTransform(1), overCanvas.height - padding);
@@ -564,7 +565,7 @@
         {
             clearTimeout(tooltipTimer);
             var chX = Math.round(dataX(crosshairX));
-            console.log(chX + ", " + avgTemps[chX - 1] + "; " + xTransform(chX) + ", " + yTransform(avgTemps[chX - 1]));
+            //console.log(chX + ", " + avgTemps[chX - 1] + "; " + xTransform(chX) + ", " + yTransform(avgTemps[chX - 1]));
             ovc.clearRect(0, 0, overCanvas.width, overCanvas.height);
             ovc.beginPath();
             ovc.moveTo(xTransform(chX), overCanvas.height - padding);
@@ -579,7 +580,7 @@
         }
     }
     
-    // Verwijder de crosshair als de muis niet over de canvas hovert
+    // Verwijder de crosshair en tooltip als de muis niet over de canvas hovert
     function mouseout()
     {
         clearTimeout(tooltipTimer);
@@ -588,20 +589,28 @@
     
     function drawTooltip(i, x, y)
     {
-        ovc.fillStyle = "#CC0000";
+        ovc.fillStyle = "#66CCFF";
         if (x + offset + 100 >= canvasDim.right)
         {
-            ovc.fillRect(x - canvasDim.left - 2 * padding, y - 2.3 * padding, 100, 35);
+            ovc.fillRect(x - canvasDim.left - 2 * padding, y - 2 * padding, 100, 35);
             ovc.fillStyle = "#000000";
-            ovc.fillText(days[i], x - canvasDim.left - 2 * padding + offset, y - 2.3 * padding + 1.5 * offset);
-            ovc.fillText((avgTemps[i] / 10) + " graden", x - canvasDim.left - 2 * padding + offset, y - 2.3 * padding + 3 * offset);
+            ovc.fillText(days[i], x - canvasDim.left - 2 * padding + offset, y - 2 * padding + 1.5 * offset);
+            ovc.fillText((avgTemps[i] / 10) + " graden", x - canvasDim.left - 2 * padding + offset, y - 2 * padding + 3 * offset);
         }
         else
         {
-            ovc.fillRect(x - canvasDim.left + offset, y - 2.3 * padding, 100, 35);
+            if (y + 35 >= canvasDim.bottom)
+            {
+                var offscreenOffset = 40;
+            }
+            else
+            {
+                var offscreenOffset = 0;
+            }
+            ovc.fillRect(x - canvasDim.left + offset, y - 2 * padding - offscreenOffset, 100, 35);
             ovc.fillStyle = "#000000";
-            ovc.fillText(days[i], x - canvasDim.left + 2 * offset, y - 2.3 * padding + 1.5 * offset);
-            ovc.fillText((avgTemps[i] / 10) + " graden", x - canvasDim.left + 2 * offset, y - 2.3 * padding + 3 * offset);
+            ovc.fillText(days[i], x - canvasDim.left + 2 * offset, y - 2 * padding + 1.5 * offset - offscreenOffset);
+            ovc.fillText((avgTemps[i] / 10) + " graden", x - canvasDim.left + 2 * offset, y - 2 * padding + 3 * offset - offscreenOffset);
         }
     }
 
