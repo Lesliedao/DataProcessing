@@ -1,11 +1,29 @@
 <!doctype html>
 <html>
   <head>
+  <style>
+  .wrapper {
+    position: relative;
+    width: 1000px;
+    height: 500px;
+  }
+  
+  .wrapper canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  </style>
     <title>Webpagina</title>
   </head>
   <body>
-    <h1>Hallo</h1>
-    <p>Gemiddelde dagelijkse temperatuur in 2015 (De Bilt)</p>
+    <h1>Homework 3 Javascript</h1>
+    <center><h1>Gemiddelde dagelijkse temperatuur in 2015 (De Bilt)</h1>
+    <div class="wrapper">
+    <canvas id="graph" width="1000" height="500">Deze browser support canvas niet</canvas>
+    <canvas id="overlay" width="1000" height="500" onmousemove="mousemove(event)" onmouseout="mouseout()"></canvas>
+    </div></center>
+    <p>Raw data: Datum, gemiddelde temperatuur</p>
     <textarea id="rawdata">
     2015/01/01,   30
     2015/01/02,   73
@@ -371,8 +389,7 @@
     2015/12/28,   89
     2015/12/29,   75
     2015/12/30,   69
-    2015/12/31,   78</textarea><br><br>
-    <canvas id="graph" width="1000" height="500">Deze browser support canvas niet</canvas>
+    2015/12/31,   78</textarea>
     <script>
     /*
     / Leslie Dao
@@ -387,12 +404,10 @@
     // Maak een array van de rawdata en maak van elke regel een element
     var dataArray = rawData.value.split('\n');
     
-    //console.log(rawData.textContent);
-    //console.log(dataArray);
-    
     // Lege arrays om de data en temperaturen apart in te appenden
     var dates = [];
     var avgTemps = [];
+    var days = [];
     
     // Loop over de dataArray
     for (var i = 0; i < dataArray.length; i++)
@@ -404,12 +419,12 @@
         var day = new Date(aux[0].replace(/ /g,''))
         // Zet de tijdzone offset terug en append aan de dates array
         dates.push(new Date(day.getTime() - day.getTimezoneOffset()*60000));
+        // Houd een array van de dagnotatie bij voor de tooltip
+        days.push(aux[0].replace(/ /g,''));
         
         // Maak van de string (element 1) een Javascript number en verwijder de spaties en append aan de avgTemps array
         avgTemps.push(Number(aux[1].replace(/ /g,'')));
     }
-    //console.log(dates);
-    //console.log(avgTemps);
     
     function createTransform(domain, range)
     {
@@ -429,9 +444,6 @@
         };
     }
     
-    //var transform = createTransform([10, 20], [10, 20]);
-    //console.log(transform(10));
-    
     // Voorwerk
     var canvas = document.getElementById('graph');
     var ctx = canvas.getContext('2d');
@@ -441,22 +453,18 @@
     
     // Bereken hoeveel milliseconden er in een dag zijn
     var msPerDay = dates[1].getTime() - dates[0].getTime();
-    //console.log(msPerDay);
     
     // Bepaal de minimum en maximum temperatuur (gemiddeld)
     var minTemp = Math.min.apply(Math, avgTemps);
     var maxTemp = Math.max.apply(Math, avgTemps);
+    
+    // Hulpvariabelen voor de offset van de grafiek en labels
     var padding = 60;
     var offset = 10;
-    //console.log(minTemp);
-    //console.log(maxTemp);
     
     // Maak transformfuncties aan
     var xTransform = createTransform([1, 365], [padding + offset, canvas.width]);
     var yTransform = createTransform([minTemp, maxTemp], [0, canvas.height - padding - offset]);
-    
-    //console.log(xTransform(15));
-    //console.log(yTransform(15));
     
     // Bereken de getransformeerde x- en y-coordinaten
     for (var i = 0; i < dates.length; i++)
@@ -464,32 +472,16 @@
         yCoords.push(canvas.height - padding - yTransform(avgTemps[i]));
         xCoords.push(xTransform((dates[i].getTime() - dates[0].getTime()) / msPerDay + 1));
     }
-    
-    //console.log(xCoords);
-    //console.log(yCoords);
 
     // Teken de grafiek
     ctx.beginPath();
+    ctx.strokeStyle = "#15FF00";
     ctx.moveTo(xCoords[0], yCoords[0]);
     for (var i = 1; i < xCoords.length; i++)
     {
-        if (avgTemps[i] >= 160)
-        {
-            ctx.strokeStyle = "#FF0000";
-        }
-        else if (avgTemps[i] >= 60)
-        {
-            ctx.strokeStyle = "#15FF00";
-        }
-        else
-        {
-            ctx.strokeStyle = "#0900FF";
-        }
         ctx.lineTo(xCoords[i], yCoords[i]);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(xCoords[i], yCoords[i]);
     }
+    ctx.stroke();
     ctx.strokeStyle = "#000000";
     
     // Teken de y-as
@@ -536,9 +528,54 @@
         ctx.lineTo(padding - offset / 2, yTransform(-20 + 20 * i));
         ctx.stroke();
         ctx.textAlign = "right";
-        ctx.fillText(-20 + 20 * i, padding - offset, canvas.height - padding - yTransform(-20 + 20 * i) + offset / 2);
+        ctx.fillText(-2 + 2 * i, padding - offset, canvas.height - padding - yTransform(-20 + 20 * i) + offset / 2);
     }
     
+    
+    var overCanvas = document.getElementById("overlay");
+    var ovc = overCanvas.getContext('2d');
+    
+    var canvasDim = canvas.getBoundingClientRect();
+    var dataX = createTransform([0, canvasDim.right - canvasDim.left - padding - offset], [1, 365]);
+    
+    function mousemove(event)
+    {
+        var crosshairX = event.clientX - canvasDim.left - padding - offset;
+        if (dataX(crosshairX) < 1)
+        {
+            console.log(1+", "+avgTemps[0]+"; "+xTransform(1)+", "+yTransform(avgTemps[0]));
+            ovc.clearRect(0, 0, overCanvas.width, overCanvas.height);
+            ovc.beginPath();
+            ovc.moveTo(xTransform(1), overCanvas.height - padding);
+            ovc.lineTo(xTransform(1), 0);
+            ovc.stroke();
+            ovc.beginPath();
+            ovc.moveTo(padding, overCanvas.height - padding - yTransform(avgTemps[0]));
+            ovc.lineTo(overCanvas.width, overCanvas.height - padding - yTransform(avgTemps[0]));
+            ovc.stroke();
+        }
+        else
+        {
+            var chX = Math.round(dataX(crosshairX));
+            console.log(chX+", "+avgTemps[chX - 1]+"; "+xTransform(chX)+", "+yTransform(avgTemps[chX - 1]));
+            ovc.clearRect(0, 0, overCanvas.width, overCanvas.height);
+            ovc.beginPath();
+            ovc.moveTo(xTransform(chX), overCanvas.height - padding);
+            ovc.lineTo(xTransform(chX), 0);
+            ovc.stroke();
+            ovc.beginPath();
+            ovc.moveTo(padding, overCanvas.height - padding - yTransform(avgTemps[chX - 1]));
+            ovc.lineTo(overCanvas.width, overCanvas.height - padding - yTransform(avgTemps[chX - 1]));
+            ovc.stroke();
+        }
+    }
+    
+    function mouseout()
+    {
+        ovc.clearRect(0, 0, overCanvas.width, overCanvas.height);
+    }
+    
+
     
     </script>
   </body>
