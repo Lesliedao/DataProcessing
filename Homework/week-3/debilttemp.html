@@ -524,8 +524,8 @@
     for (var i = 0; i < 15; i++)
     {
         ctx.beginPath();
-        ctx.moveTo(padding, yTransform(-20 + 20 * i));
-        ctx.lineTo(padding - offset / 2, yTransform(-20 + 20 * i));
+        ctx.moveTo(padding, yTransform(-20 + 20 * i) - 2);
+        ctx.lineTo(padding - offset / 2, yTransform(-20 + 20 * i) - 2);
         ctx.stroke();
         ctx.textAlign = "right";
         ctx.fillText(-2 + 2 * i, padding - offset, canvas.height - padding - yTransform(-20 + 20 * i) + offset / 2);
@@ -538,17 +538,14 @@
     
     var canvasDim = canvas.getBoundingClientRect();
     var dataX = createTransform([0, canvasDim.right - canvasDim.left - padding - offset], [1, 365]);
-    console.log(canvasDim);
     
     var tooltipTimer;
     function mousemove(event)
     {
         var crosshairX = event.clientX - canvasDim.left - padding - offset;
-        console.log(event.clientY);
         if (dataX(crosshairX) < 1)
         {
             clearTimeout(tooltipTimer);
-            //console.log(1 + ", " + avgTemps[0] + "; " + xTransform(1) + ", " + yTransform(avgTemps[0]));
             ovc.clearRect(0, 0, overCanvas.width, overCanvas.height);
             ovc.beginPath();
             ovc.moveTo(xTransform(1), overCanvas.height - padding);
@@ -565,7 +562,6 @@
         {
             clearTimeout(tooltipTimer);
             var chX = Math.round(dataX(crosshairX));
-            //console.log(chX + ", " + avgTemps[chX - 1] + "; " + xTransform(chX) + ", " + yTransform(avgTemps[chX - 1]));
             ovc.clearRect(0, 0, overCanvas.width, overCanvas.height);
             ovc.beginPath();
             ovc.moveTo(xTransform(chX), overCanvas.height - padding);
@@ -589,7 +585,7 @@
     
     function drawTooltip(i, x, y)
     {
-        ovc.fillStyle = "#66CCFF";
+        ovc.fillStyle = "#99CCFF";
         if (x + offset + 100 >= canvasDim.right)
         {
             ovc.fillRect(x - canvasDim.left - 2 * padding, y - 2 * padding, 100, 35);
