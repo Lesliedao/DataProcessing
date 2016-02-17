@@ -22,7 +22,7 @@ for (var i = 0; i < dataArray.length; i++)
 {
 	// Maak een hulpvariabele aan die de datum en temperatuur splitst
 	var aux = dataArray[i].split(',');
-	//console.log(aux);
+	
 	// Maak van de string (element 0) een Javascript datum en verwijder de spaties
 	var day = new Date(aux[0].replace(/ /g,''))
 	// Zet de tijdzone offset terug en append aan de dates array
