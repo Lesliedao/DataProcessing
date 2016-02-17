@@ -16,8 +16,8 @@ var dataArray = rawData.value.split('\n');
 
 // Lege arrays om de data en temperaturen apart in te appenden
 var dates = [];
-var avgTemps = [];
 var days = [];
+var avgTemps = [];
 
 // Loop over de dataArray
 for (var i = 0; i < dataArray.length; i++)
@@ -191,6 +191,7 @@ function mousemove(event)
 	
 	// Maak alvast een index variabele aan
 	var chX;
+	
 	// Als de cursor op het canvas zit, maar links van de grafiek, snap de crosshair dan op de eerste dag
 	if (dataX(crosshairX) < 1)
 	{
@@ -233,7 +234,7 @@ function drawTooltip(i, x, y)
 	// Achtergrondkleur van de tooltip
 	ovc.fillStyle = "#FFFFFF";
 	
-	// Hulpvariabele voor als de tooltip door het canvas wordt afgesneden
+	// Hulpvariabele voor als de tooltip door het canvas van onder wordt afgesneden
 	var offscreenOffset = 0;
 	
 	// x- en y-coordinaten voor de tooltipbox en de tooltipteksten
