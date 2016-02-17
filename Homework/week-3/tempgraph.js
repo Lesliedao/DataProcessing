@@ -5,6 +5,8 @@
 / Neemt de dagelijkse gemiddelde temperatuur van het jaar 2015 en plot een grafiek
 / Bron: http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi (KNMI)
 / Interactiviteit: crosshair die snapt op de grafiek en tooltip (delay 1 seconde)
+/
+/ Indentaties op github kunnen weer afwijken dan de indentaties in een tekstverwerker
 */
 
 // Zoek in de DOM naar de id 'rawdata'
