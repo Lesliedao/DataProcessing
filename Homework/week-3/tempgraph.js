@@ -36,7 +36,8 @@ for (var i = 0; i < dataArray.length; i++)
 
 function createTransform(domain, range)
 {
-	/* domain is a two-element array of the data bounds [domain_min, domain_max]
+	/* 
+	/ domain is a two-element array of the data bounds [domain_min, domain_max]
 	/ range is a two-element array of the screen bounds [range_min, range_max]
 	/ This gives you two equations to solve:
 	/ range_min = alpha * domain_min + beta
@@ -132,6 +133,7 @@ for (var i = 0; i < months.length; i++)
 	ctx.stroke();
 	
 	// Roteer het canvas zodat de maanden schuin langs de x-as komen te staan
+	// Bewaar het niet-geroteerde canvas zodat je dat later kunt herstellen
 	ctx.save();
 	ctx.translate(xCoords[firstDayOfTheMonth[i]], canvas.height - padding + offset);
 	ctx.rotate(-Math.PI / 4);
