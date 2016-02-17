@@ -229,7 +229,7 @@ function mouseout()
 function drawTooltip(i, x, y)
 {
 	// Achtergrondkleur van de tooltip
-	ovc.fillStyle = "#66FFFF";
+	ovc.fillStyle = "#FFFFFF";
 	
 	// Hulpvariabele voor als de tooltip door het canvas wordt afgesneden
 	var offscreenOffset = 0;
