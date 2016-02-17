@@ -36,12 +36,13 @@ for (var i = 0; i < dataArray.length; i++)
 
 function createTransform(domain, range)
 {
-	// domain is a two-element array of the data bounds [domain_min, domain_max]
-	// range is a two-element array of the screen bounds [range_min, range_max]
-	// This gives you two equations to solve:
-	// range_min = alpha * domain_min + beta
-	// range_max = alpha * domain_max + beta
-	// Implement your solution here:
+	/* domain is a two-element array of the data bounds [domain_min, domain_max]
+	/ range is a two-element array of the screen bounds [range_min, range_max]
+	/ This gives you two equations to solve:
+	/ range_min = alpha * domain_min + beta
+	/ range_max = alpha * domain_max + beta
+	/ Implement your solution here:
+	*/
 	
 	// Het stelsel vergelijkingen is als matrixvergelijking te schrijven
 	// door deze vergelijking op te lossen, volgt
@@ -85,10 +86,11 @@ for (var i = 0; i < dates.length; i++)
 	xCoords.push(xTransform((dates[i].getTime() - dates[0].getTime()) / msPerDay + 1));
 }
 
-// Teken de grafiek (een continue lijn)
-ctx.beginPath();
 // De kleur van de grafiek
 ctx.strokeStyle = "#15FF00";
+
+// Teken de grafiek (een continue lijn)
+ctx.beginPath();
 ctx.moveTo(xCoords[0], yCoords[0]);
 for (var i = 1; i < xCoords.length; i++)
 {
@@ -105,14 +107,12 @@ ctx.beginPath();
 ctx.moveTo(padding, 0);
 ctx.lineTo(padding, canvas.height - padding);
 ctx.stroke();
-ctx.closePath();
 
 // Teken de x-as
 ctx.beginPath();
 ctx.moveTo(padding, canvas.height - padding);
 ctx.lineTo(canvas.width, canvas.height - padding);
 ctx.stroke();
-ctx.closePath();
 
 // Voorwerk voor de x-as labels
 ctx.fillStyle = "#444444";
@@ -120,6 +120,7 @@ ctx.font = "normal normal 11px Helvetica";
 
 // Bepaal de eerste dag van de maand van elke maand (zero-indexed, geen schrikkeljaar) voor de x-coordinaat van de label
 var firstDayOfTheMonth = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+// Hulparray om de labels te maken
 var months = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
 
 for (var i = 0; i < months.length; i++)
@@ -136,6 +137,7 @@ for (var i = 0; i < months.length; i++)
 	ctx.rotate(-Math.PI / 4);
 	ctx.textAlign = "right";
 	ctx.fillText(months[i], 0, 0);
+	// Herstel het canvas zodat het niet meer geroteerd is
 	ctx.restore();
 }
 
@@ -236,11 +238,14 @@ function drawTooltip(i, x, y)
 	// Als de tooltip aan de rechterkant afgesneden wordt door het canvas, plaats hem dan linksonder de cursor
 	if (x + offset + 100 >= canvasDim.right)
 	{
-		// Trial-and-error coordinaten voor de tooltip
+		// Trial-and-error coordinaten voor de tooltipelementen
+		// Tooltipbox
 		ttX = x - canvasDim.left - 2 * padding;
 		ttY = y - 2 * padding;
+		// Datum in de tooltip
 		ttDateX = x - canvasDim.left - 2 * padding + offset;
 		ttDateY = y - 2 * padding + 1.5 * offset;
+		// Temperatuur in de tooltip
 		ttTempX = x - canvasDim.left - 2 * padding + offset;
 		ttTempY = y - 2 * padding + 3 * offset
 	}
@@ -248,16 +253,19 @@ function drawTooltip(i, x, y)
 	else
 	{
 		// Als de tooltip van onder afgesneden wordt door het canvas, schuif de tooltip dan iets omhoog
-		// Dit is voor deze data alleen relevant waar de tooltip rechts van de cursor staat
+		// Dit is voor -deze- data alleen relevant waar de tooltip rechts van de cursor staat
 		if (y + 35 >= canvasDim.bottom)
 		{
 			offscreenOffset = 40;
 		}
-		// Trial-and-error coordinaten voor de tooltip
+		// Trial-and-error coordinaten voor de tooltipelementen
+		// Tooltipbox
 		ttX = x - canvasDim.left + offset;
 		ttY = y - 2 * padding - offscreenOffset;
+		// Datum in de tooltip
 		ttDateX = x - canvasDim.left + 2 * offset;
 		ttDateY = y - 2 * padding + 1.5 * offset - offscreenOffset;
+		// Temperatuur in de tooltip
 		ttTempX = x - canvasDim.left + 2 * offset;
 		ttTempY = y - 2 * padding + 3 * offset - offscreenOffset;
 	}
@@ -265,9 +273,10 @@ function drawTooltip(i, x, y)
 	ovc.beginPath();
 	ovc.rect(ttX, ttY, 100, 35);
 	ovc.fill();
-	// Geef de tooltip een border
+	// Geef de tooltipbox een border
 	ovc.lineWidth = 2;
 	ovc.stroke();
+	// Reset de lineWidth zodat de crosshair niet dikker wordt
 	ovc.lineWidth = 1;
 	
 	// Plaats de tekst (datum en temperatuur) in de tooltipbox
