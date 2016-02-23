@@ -5,12 +5,15 @@
 }
 
 /* country colors */
-#de
+
+.hidden
 {
-  fill: #FF0000;
+    display: none;
 }
 
-#nl
+#svg2985
 {
-  fill: #FFA700;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
