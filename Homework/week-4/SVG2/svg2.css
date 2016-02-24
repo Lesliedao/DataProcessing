@@ -4,16 +4,69 @@
   fill: #2655FF;
 }
 
-/* country colors */
-
+/* verborgen elementen */
 .hidden
 {
     display: none;
 }
 
+/* center svg */
 #svg2985
 {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+/* 
+/ legenda 
+/ Bron: http://jsfiddle.net/MTB2q/
+*/
+#legend
+{
+	text-align: center;
+}
+
+#legend ul
+{
+	list-style: none;
+}
+#legend ul li
+{
+	display: inline-block;
+}
+
+#legend span
+{
+	border: 1px solid #ccc;
+	float: left;
+	width: 12px;
+	height: 12px;
+	margin: 2px;
+}
+
+/* legenda kleuren */
+#legend .range1
+{
+	background-color: #EDF8E9;
+}
+
+#legend .range2
+{
+	background-color: #BAE4B3;
+}
+
+#legend .range3
+{
+	background-color: #74C476;
+}
+
+#legend .range4
+{
+	background-color: #31A354;
+}
+
+#legend .range5
+{
+	background-color: #006D2C;
 }
