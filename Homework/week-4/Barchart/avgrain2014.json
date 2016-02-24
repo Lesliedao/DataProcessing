@@ -1,14 +1,16 @@
 {
-    "Januari": 56.7,
-    "Februari": 43.8,
-    "Maart": 31.0,
-    "April": 38.2,
-    "Mei": 97.1,
-    "Juni": 45.2,
-    "Juli": 76.0,
-    "Augustus": 115.4,
-    "September": 22.0,
-    "Oktober": 53.6,
-    "November": 36.6,
-    "December": 65.0
+    "data": [
+        ["Januari", 56.7],
+        ["Februari", 43.8],
+        ["Maart", 31.0],
+        ["April", 38.2],
+        ["Mei", 97.1],
+        ["Juni", 45.2],
+        ["Juli", 76.0],
+        ["Augustus", 115.4],
+        ["September", 22.0],
+        ["Oktober", 53.6],
+        ["November", 36.6],
+        ["December", 65.0]
+    ]
 }
