@@ -47,11 +47,16 @@ window.onload = function() {
                     color = range5;
                 
                 changeColor(code, color);
+                // Uitzondering voor Nederland: extra id voor Zeeland en waddeneilanden
+                if (code == "nl")
+                	changeColor("nlx", color);
+                	
+            	// Uitzondering voor VK: extra class voor Noord Ierland
+            	if (code == "gb")
+            		document.getElementsByClassName("gb")[1].style.fill = color;
             }
         }
     }
-    // Aanroepen van extra fills, indien nodig
-    //document.getElementsByClassName("gb")[1].style.fill = range1;
 }
 
 /* 
