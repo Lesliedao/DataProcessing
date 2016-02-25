@@ -1,16 +1,16 @@
 {
     "data": [
-        ["Januari", 56.7],
-        ["Februari", 43.8],
-        ["Maart", 31.0],
-        ["April", 38.2],
-        ["Mei", 97.1],
-        ["Juni", 45.2],
-        ["Juli", 76.0],
-        ["Augustus", 115.4],
-        ["September", 22.0],
-        ["Oktober", 53.6],
-        ["November", 36.6],
-        ["December", 65.0]
+        {"month": "Januari", "rain": 56.7},
+        {"month": "Februari", "rain": 43.8},
+        {"month": "Maart", "rain": 31.0},
+        {"month": "April", "rain": 38.2},
+        {"month": "Mei", "rain": 97.1},
+        {"month": "Juni", "rain": 45.2},
+        {"month": "Juli", "rain": 76.0},
+        {"month": "Augustus", "rain": 115.4},
+        {"month": "September", "rain": 22.0},
+        {"month": "Oktober", "rain": 53.6},
+        {"month": "November", "rain": 36.6},
+        {"month": "December", "rain": 65.0}
     ]
 }
