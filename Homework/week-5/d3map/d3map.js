@@ -18,10 +18,10 @@ var map = new Datamap({
         defaultFill: "#8F8F8F"
     },
     setProjection: function(element) {
-        var projection = d3.geo.mercator()
-            .center([15, 55])
+        var projection = d3.geo.conicEqualArea()
+            .center([15, 52])
             .rotate([0, 0])
-            .scale(500)
+            .scale(800)
             .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
 
             var path = d3.geo.path()
@@ -180,7 +180,8 @@ var map = new Datamap({
         "SDN": {"name": "Sudan", "value": 72.73, "fillKey": "ABVAVG"},
         "ARM": {"name": "Armenia", "value": 30.22, "fillKey": "BELAVG"},
         "PNG": {"name": "Papua New Guinea", "value": 32.84, "fillKey": "BELAVG"},
-        "CUB": {"name": "Cuba", "value": 3.96, "fillKey": "LOW"}
+        "CUB": {"name": "Cuba", "value": 3.96, "fillKey": "LOW"},
+        "GRL": {"name": "Greenland", "value": "NA"}
     },
     geographyConfig: {
         popupTemplate: function(geo, data) {
@@ -202,3 +203,8 @@ map.legend({
         HIGH: "80% - 100%"
     }
 });
+
+// var countries = Datamap.prototype.worldTopo.objects.world.geometries;
+// for (var i = 0, j = countries.length; i < j; i++) {
+//   console.log(countries[i].id, countries[i].properties);
+// }

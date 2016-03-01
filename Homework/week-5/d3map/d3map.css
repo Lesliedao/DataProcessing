@@ -1,0 +1,20 @@
+.datamaps-legend {
+    padding-bottom: 20px;
+    z-index: 1001;
+    position: absolute;
+    left: 4px;
+    font-size: 12px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.datamaps-legend dt,
+.datamaps-legend dd {
+    float: right;
+    margin: 0 3px 0 0;
+    }
+
+.datamaps-legend dd {
+    width: 20px;
+    margin-right: 6px;
+    border-radius: 3px;
+}
