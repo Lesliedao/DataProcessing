@@ -2,8 +2,9 @@
 / Leslie Dao
 / 10561234
 /
-/ Laadt de JSON neerslagsom per maand in Nijverdal in (2014) met D3
-/ Bron: http://weerstationnijverdal.nl/metingen/historie/Gemiddelde%20neerslag%20per%20maand.pdf
+/ Maakt een datamap met percentages renewable energy
+/ Data van: https://en.wikipedia.org/wiki/List_of_countries_by_electricity_production_from_renewable_sources
+/ gescrapet met JSONconvert.py
 */
 
 // Nieuwe datamap aanmaken voor de data
