@@ -22,7 +22,13 @@ var map = new Datamap({
         HIGH: "#006D2C",
         defaultFill: "#8F8F8F"
     },
-    // Zoom in op europa
+    /*
+    / De dataset is niet compleet, dus voor een groot gedeelte van Afrika en
+    / Zuid-Amerika mist de data en is de datamap grijs. Zoom daarom in op Europa,
+    / waar de data voor de meeste landen wel beschikbaar is (met setProjection).
+    / Voor landen in view waarvan de data wel mist, wordt de waarde "NA" handmatig
+    / aan het eind van 'data' toegevoegd.
+    */
     setProjection: function(element) {
         var projection = d3.geo.conicEqualArea()
             .center([15, 52])
