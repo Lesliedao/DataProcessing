@@ -43,7 +43,7 @@ var yAxis = d3.svg.axis()
 var tip = d3.tip()
     .attr("class", "tooltip")
     .offset([-10, 0])
-    .html(function(d) {return "<strong>" + d.month + ": </strong>" + d.rain;});
+    .html(function(d) {return "<strong>" + d.month + ": </strong>" + d.rain + " mm";});
 
 svg.call(tip);
 
@@ -82,13 +82,20 @@ d3.json("totalrain2014.json", function(error, json) {
         .enter().append("rect")
             .attr("class", "bar")
             .attr("x", function(d) {return x(d.month);})
-            // Omdat de range van y aflopend is, is y direct te bepalen
-            .attr("y", function(d) {return y(d.rain);})
-            // maar moet de height bepaald worden met de height van de chart
-            .attr("height", function(d) {return height - y(d.rain);})
+            // Zet y en height klaar voor de animatie
+            .attr("y", height)
+            .attr("height", 0)
             // De x scale houdt de width van elke bar bij
             .attr("width", x.rangeBand())
             // Laat de tooltip zien bij hoveren en verberg bij mouseout
             .on("mouseover", tip.show)
-            .on("mouseout", tip.hide);
+            .on("mouseout", tip.hide)
+            // Geef de barchart een fancy start animatie
+            .transition()
+                .duration(function(d, i) {return 100 * i;})
+                // Omdat de range van y aflopend is, is y direct te bepalen
+                .attr("y", function(d) {return y(d.rain);})
+                // maar moet de height bepaald worden met de height van de chart
+                .attr("height", function(d) {return height - y(d.rain);});
+
 });
