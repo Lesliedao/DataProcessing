@@ -6,9 +6,13 @@
 / Bron: http://weerstationnijverdal.nl/metingen/historie/Gemiddelde%20neerslag%20per%20maand.pdf
 */
 
+// Nieuwe datamap aanmaken voor de data
 var map = new Datamap({
+    // Het HTML element voor de map heeft de id "map"
     element: document.getElementById("map"),
+    // De scope is de hele wereld (in eerste instantie)
     scope: 'world',
+    // De kleuren die geassocieerd worden met de keys
     fills: {
         LOW: "#EDF8E9",
         BELAVG: "#BAE4B3",
@@ -17,11 +21,12 @@ var map = new Datamap({
         HIGH: "#006D2C",
         defaultFill: "#8F8F8F"
     },
+    // Zoom in op europa
     setProjection: function(element) {
         var projection = d3.geo.conicEqualArea()
             .center([15, 52])
             .rotate([0, 0])
-            .scale(800)
+            .scale(750)
             .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
 
             var path = d3.geo.path()
@@ -29,6 +34,7 @@ var map = new Datamap({
 
         return {path: path, projection: projection};
     },
+    // Dit is de data verkregen met de scraper (incompleet volgens wikipedia)
     data: {
         "DZA": {"name": "Algeria", "value": 1.14, "fillKey": "LOW"},
         "AGO": {"name": "Angola", "value": 71.96, "fillKey": "ABVAVG"},
@@ -181,9 +187,16 @@ var map = new Datamap({
         "ARM": {"name": "Armenia", "value": 30.22, "fillKey": "BELAVG"},
         "PNG": {"name": "Papua New Guinea", "value": 32.84, "fillKey": "BELAVG"},
         "CUB": {"name": "Cuba", "value": 3.96, "fillKey": "LOW"},
-        "GRL": {"name": "Greenland", "value": "NA"}
+        // Missende landen een hovertext geven
+        "GRL": {"name": "Greenland", "value": "NA"},
+        "SAU": {"name": "Saudi Arabia", "value": "NA"},
+        // Missende 3-letter codes van landen
+        "-99": {"name": "Missing codes", "value": "NA"}
     },
+    // Stel de custom popup message in
     geographyConfig: {
+        // Geef het gehighlighte land een zwarte border
+        highlightBorderColor: 'rgba(0,0,0,0.5)',
         popupTemplate: function(geo, data) {
             return ['<div class="hoverinfo"><strong>',
                     geo.properties.name, ': ' + data.value,
@@ -192,9 +205,13 @@ var map = new Datamap({
     }
 });
 
+// Maak een legenda voor de datamap met custom waarden
 map.legend({
+    // Titel van de legenda
     legendTitle: "Legend",
+    // Label voor de default fill (waar geen data voor is)
     defaultFillName: "No data",
+    // Custom labels voor de fill kleuren (waar wel data voor is)
     labels: {
         LOW: "0% - 20%",
         BELAVG: "20% - 40%",
@@ -203,8 +220,3 @@ map.legend({
         HIGH: "80% - 100%"
     }
 });
-
-// var countries = Datamap.prototype.worldTopo.objects.world.geometries;
-// for (var i = 0, j = countries.length; i < j; i++) {
-//   console.log(countries[i].id, countries[i].properties);
-// }
