@@ -92,7 +92,7 @@ d3.json("totalrain2014.json", function(error, json) {
             .on("mouseout", tip.hide)
             // Geef de barchart een fancy start animatie
             .transition()
-                .duration(function(d, i) {return 100 * i;})
+                .duration(function(d, i) {return 100 + 100 * i;})
                 // Omdat de range van y aflopend is, is y direct te bepalen
                 .attr("y", function(d) {return y(d.rain);})
                 // maar moet de height bepaald worden met de height van de chart
