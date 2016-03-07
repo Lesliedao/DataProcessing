@@ -1,0 +1,38 @@
+svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis text {
+    font: 9px sans-serif;
+}
+
+.canvas {
+    fill: none;
+    pointer-events: all;
+}
+
+.focus text {
+    font: 16px sans-serif;
+    font-weight: bold;
+}
+
+.crosshair {
+    fill: none;
+    stroke: #000;
+    stroke-width: 1px;
+}
