@@ -3,13 +3,14 @@
 / Leslie Dao
 / 10561234
 /
-/ Maakt een lijngrafiek met de gemiddelde dagtemperatuur in Rotterdam in 2014 (in 0.1 graden Celsius)
+/ Maakt een lijngrafiek met de gemiddelde dagtemperatuur in Rotterdam in 2014 (in graden Celsius)
 /
 / Voorbeeldbron: http://bl.ocks.org/mbostock/3883245
 / Databron: http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 */
 
-var margin = {top: 20, bottom: 30, right: 130, left: 50};
+// Afmetingen van de chart
+var margin = {top: 20, bottom: 60, right: 130, left: 50};
 var width = 1200 - margin.left - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
@@ -24,12 +25,14 @@ var svg = d3.select("body").append("svg")
     .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+// Schalen en assen definieren
 var x = d3.time.scale()
     .range([0, width]);
 
 var y = d3.scale.linear()
     .range([height, 0]);
 
+// Ticks voor elke maand
 var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
@@ -39,39 +42,50 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
+// De lijn neemt de datum als x- en de gemiddelde temperatuur als y-coordinaat
 var line = d3.svg.line()
     .x(function(d) {return x(d.date);})
     .y(function(d) {return y(d.avg);})
 
+// Laad de data in vanuit een csv bestand
 var data;
 d3.csv("data.csv", function(d) {
     return {
         // dateFormat kijkt naar UTC tijd dus loopt 1 uur achter; zet dat weer terug
         date: new Date(dateFormat.parse(d.date) - new Date().getTimezoneOffset() * 60 * 1000),
-        avg: +d.avg,
+        avg: (+d.avg) / 10,
         min: +d.min,
         max: +d.max
     };
 }, function(error, rows) {
         // Extent bepaalt het minimum en het maximum. Nice zorgt voor mooiere afkapwaarden.
         x.domain(d3.extent(rows, function(d) {return d.date;})).nice();
-        y.domain(d3.extent(rows, function(d) {return d.avg;}));
+        y.domain(d3.extent(rows, function(d) {return d.avg;})).nice();
 
+        // Assen toevoegen
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
+            .call(xAxis)
+            // Zet de labels aan de x-as schuin, zodat ze elkaar niet overlappen
+            .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)" );
 
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis)
+            // Een label aan de y-as hangen
             .append("text")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 3)
                 .attr("dy", ".75em")
                 .style("text-anchor", "end")
-                .text("Temperatuur in 0.1 graden C");
+                .text("Temperatuur in graden Celsius");
 
+        // De lijn tekenen
         svg.append("path")
             .datum(rows)
             .attr("class", "line")
@@ -82,7 +96,7 @@ d3.csv("data.csv", function(d) {
             .attr("class", "focus")
             .style("display", "none");
 
-        // Crosshair
+        // Crosshair klaarzetten
         focus.append("line")
             .attr("id", "crosshairX")
             .attr("class", "crosshair");
@@ -90,8 +104,10 @@ d3.csv("data.csv", function(d) {
             .attr("id", "crosshairY")
             .attr("class", "crosshair");
 
+        // Container voor de tooltiptekst
         focus.append("text");
 
+        // Overlay over de chart die de cursor trackt
         svg.append("rect")
             .attr("class", "canvas")
             .attr("width", width)
@@ -100,19 +116,24 @@ d3.csv("data.csv", function(d) {
             .on("mouseout", function() {focus.style("display", "none");})
             .on("mousemove", updateTooltip);
 
+        // De functie die wordt aangeroepen als de cursor over de chart beweegt
         function updateTooltip() {
             // 0e element is de x-coordinaat
             var x0 = x.invert(d3.mouse(this)[0]);
             // Zoek de index bij x0
             var i = bisectDate(rows, x0);
 
+            // Placeholder voor de datum waarvoor de tooltip verschijnt
             var d;
+            // Als de index 0 is, laat dan informatie zien van de eerste dag
             if (i == 0) {
                 d = rows[0];
             }
+            // Als de index het laatste element is (of hoger vanwege marges), laat dan de laatste dag zien
             else if (i >= (rows.length - 1)) {
                 d = rows[rows.length - 1];
             }
+            // Anders (dus dagen ertussen in)
             else {
                 // Zoek de twee waarden rond de cursor
                 var d0 = rows[i - 1], d1 = rows[i];
@@ -121,25 +142,28 @@ d3.csv("data.csv", function(d) {
                 d = x0 - d0.avg > d1.avg - x0 ? d1 : d0;
             }
 
-            var chX = x(d.date);
-            var chY = y(d.avg);
+            // Bepaal de x- en y-coordinaat van de crosshair
+            var chX = x(d.date), chY = y(d.avg);
 
+            // Verticale component van de crosshair tekenen
             focus.select("#crosshairY")
                 .attr("x1", chX)
                 .attr("x2", chX)
-                .attr("y1", y(d3.min(rows, function(d) {return d.avg;})))
-                .attr("y2", y(d3.max(rows, function(d) {return d.avg;})));
+                .attr("y1", 0)
+                .attr("y2", height);
+            // Horizontale component van de crosshair tekenen
             focus.select("#crosshairX")
-                .attr("x1", x(d3.min(rows, function(d) {return d.date;})))
-                .attr("x2", x(d3.max(rows, function(d) {return d.date;})))
+                .attr("x1", 0)
+                .attr("x2", width)
                 .attr("y1", chY)
                 .attr("y2", chY);
 
+            // Laat de datum en gemiddelde temperatuur van die dag zien als een tooltip naast de crosshair
             focus.select("text")
                 .attr("x", chX + 5)
                 .attr("y", chY)
                 .attr("dy", "-.35em")
-                .text(d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + d.avg / 10 + "C");
+                .text(d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + d.avg + "C");
         }
 
 });
