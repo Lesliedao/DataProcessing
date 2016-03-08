@@ -10,7 +10,7 @@
 */
 
 var margin = {top: 20, bottom: 30, right: 130, left: 50};
-var width = 1350 - margin.left - margin.right;
+var width = 1200 - margin.left - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
 // De data in de data van het KNMI hebben de volgende format
