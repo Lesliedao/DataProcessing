@@ -48,7 +48,6 @@ var line = d3.svg.line()
     .y(function(d) {return y(d.avg);})
 
 // Laad de data in vanuit een csv bestand
-var data;
 d3.csv("data.csv", function(d) {
     return {
         // dateFormat kijkt naar UTC tijd dus loopt 1 uur achter; zet dat weer terug
