@@ -138,7 +138,7 @@ d3.csv("data.csv", function(d) {
                 var d0 = rows[i - 1], d1 = rows[i];
 
                 // Bepaal welke van de twee waarden dichter bij de cursor ligt
-                d = x0 - d0.avg > d1.avg - x0 ? d1 : d0;
+                d = x0 - d0.date > d1.date - x0 ? d1 : d0;
             }
 
             // Bepaal de x- en y-coordinaat van de crosshair
