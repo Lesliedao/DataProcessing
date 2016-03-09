@@ -22,12 +22,14 @@ var dateFormat = d3.time.format("%Y%m%d");
 // Bisect functie die gebruikt wordt bij het vinden van de dichtstbijzijnde waarde voor de tooltip
 var bisectDate = d3.bisector(function(d) {return d.date;}).left;
 
+// Maak de container voor de line chart
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+// Initiele assen (zonder labels)
 svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")");
@@ -66,14 +68,14 @@ var yAxis = d3.svg.axis()
 // De lijn neemt de datum als x- en de temperatuur als y-coordinaat
 var line = d3.svg.line()
     .x(function(d) {return x(d.date);})
-    .y(function(d) {return y(d.temp);})
+    .y(function(d) {return y(d.temp);});
 
 // Laad de data in vanuit een csv bestand
 d3.csv("data.csv", function(error, rows) {
     // Pak een willekeurig element om de keys uit te filteren die niet de datum zijn voor een ordinal scale
     color.domain(d3.keys(rows[0]).filter(function(key) {return key !== "date";}));
 
-    // Maak van een js date voor elk datapunt
+    // Maak een js date voor elk datapunt en corrigeer voor UTC tijd
     rows.forEach(function(d) {
         d.date = new Date(dateFormat.parse(d.date) - new Date().getTimezoneOffset() * 60 * 1000);
     });
@@ -139,9 +141,9 @@ d3.csv("data.csv", function(error, rows) {
             }
 
             // Bepaal de x- en y-coordinaat van de crosshair
-            var chX = x(d.date)
+            var chX = x(d.date);
             var chY;
-            // Een d3.select() werkt niet om te checken welke button is geselecteerd
+            // Bepaal welke lijn de crosshair moet volgen adhv de radio buttons
             if (document.getElementById("chMin").checked) {
                 chY = y(d.Min / 10);
             }
@@ -171,6 +173,7 @@ d3.csv("data.csv", function(error, rows) {
                 .attr("y", chY)
                 .attr("dy", "-.35em")
                 .text(function() {
+                    // Bepaal welke temperatuur in de tooltip verschijnt adhv de radio buttons
                     var degrees;
                     if (document.getElementById("chMin").checked) {
                         degrees = d.Min;
@@ -183,8 +186,7 @@ d3.csv("data.csv", function(error, rows) {
                     }
                     return d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + degrees / 10 + "C";
                 });
-        }
-);
+        });
 });
 
 // Functie die wordt aangeroepen om de eerste lijnen te tekenen (als de pagina geladen wordt)
@@ -224,14 +226,17 @@ function initialChart(newData) {
     var temp = svg.selectAll(".temp")
         .data(temps);
 
+    // Maak voor elke lijn een aparte group aan
     temp.enter().append("g")
         .attr("class", "temp");
 
+    // Teken de lijntjes in de svg container
     temp.append("path")
         .attr("class", "line")
         .attr("d", function(d) {return line(d.values);})
         .style("stroke", function(d) {return color(d.type);});
 
+    // Plaats de label die bij de lijntjes hoort aan het eind van elke lijn
     temp.append("text")
         .datum(function(d) {return {type: d.type, value: d.values[d.values.length - 1]};})
         .attr("x", function(d) {return x(d.value.date) + 3;})
@@ -262,7 +267,7 @@ function updateChart(newData) {
         d3.max(temps, function(t) {return d3.max(t.values, function(v) {return v.temp;});})
     ]).nice();
 
-    // De assen tekenen
+    // De assen animeren
     svg.select(".x.axis")
         .transition()
             .duration(1000)
@@ -273,19 +278,21 @@ function updateChart(newData) {
             .duration(1000)
             .call(yAxis);
 
-    // De data binden
+    // De nieuwe data binden
     var temp = svg.selectAll(".temp")
         .data(temps);
 
+    // Update cycle voor de lijntjes
     temp.enter().append("g")
         .attr("class", "temp");
 
+    // Animeer het verschuiven van de lijntjes
     temp.select("path")
         .transition()
             .duration(1000)
-            .ease("bounce")
             .attr("d", function(d) {return line(d.values);});
 
+    // Animeer het verschuiven van de labeltekst
     temp.select("text")
         .datum(function(d) {return {type: d.type, value: d.values[d.values.length - 1]};})
         .transition()
@@ -293,5 +300,6 @@ function updateChart(newData) {
                 .attr("x", function(d) {return x(d.value.date) + 3;})
                 .attr("y", function(d) {return y(d.value.temp);});
 
+    // Verwijder de oude data
     temp.exit().remove();
 }
