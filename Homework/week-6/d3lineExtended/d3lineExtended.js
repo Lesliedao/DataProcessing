@@ -34,6 +34,7 @@ svg.append("g")
 
 svg.append("g")
     .attr("class", "y axis")
+    // Een naam aan de y-as hangen
     .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 3)
@@ -48,8 +49,9 @@ var x = d3.time.scale()
 var y = d3.scale.linear()
     .range([height, 0]);
 
-// Kleurenschaal
-var color = d3.scale.category10();
+// Kleurenschaal geimporteerd uit colorbrewer.js
+var color = d3.scale.ordinal()
+    .range(colorbrewer.Set1[3].reverse());
 
 // Ticks voor elke maand
 var xAxis = d3.svg.axis()
@@ -67,7 +69,6 @@ var line = d3.svg.line()
     .y(function(d) {return y(d.temp);})
 
 // Laad de data in vanuit een csv bestand
-var data;
 d3.csv("data.csv", function(error, rows) {
     // Pak een willekeurig element om de keys uit te filteren die niet de datum zijn voor een ordinal scale
     color.domain(d3.keys(rows[0]).filter(function(key) {return key !== "date";}));
@@ -79,7 +80,7 @@ d3.csv("data.csv", function(error, rows) {
 
     // Initiele visualisatie
     var dataShown = rows.filter(function(d) {return d.date.getFullYear() == eval(d3.select("#dropdown").property("value"));});
-    updateChart(dataShown);
+    initialChart(dataShown);
 
     // Update de dataset adhv de gekozen optie in het dropdown menu
     d3.select("#dropdown")
@@ -170,21 +171,76 @@ d3.csv("data.csv", function(error, rows) {
                 .attr("y", chY)
                 .attr("dy", "-.35em")
                 .text(function() {
+                    var degrees;
                     if (document.getElementById("chMin").checked) {
-                        return d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + d.Min / 10 + "C";
+                        degrees = d.Min;
                     }
                     else if (document.getElementById("chGem").checked) {
-                        return d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + d.Gem / 10 + "C";
+                        degrees = d.Gem;
                     }
                     else {
-                        return d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + d.Max / 10 + "C";
+                        degrees = d.Max;
                     }
+                    return d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + degrees / 10 + "C";
                 });
         }
 );
 });
 
-// De functie die wordt aangeroepen om de lijnen te tekenen
+// Functie die wordt aangeroepen om de eerste lijnen te tekenen (als de pagina geladen wordt)
+function initialChart(newData) {
+    // Maak een array met objecten voor de temperaturen
+    // 0: Gem, 1: Min, 2: Max
+    var temps = color.domain().map(function(name) {
+        return {
+            type: name,
+            values: newData.map(function(d) {
+                return {date: d.date, temp: +d[name] / 10};
+            })
+        };
+    });
+
+    // Extent bepaalt het minimum en het maximum. Nice zorgt voor mooiere afkapwaarden.
+    x.domain(d3.extent(newData, function(d) {return d.date;})).nice();
+
+    // Het domein van y hangt nu af van drie mogelijke datasets die genest zijn in objecten
+    y.domain([
+        d3.min(temps, function(t) {return d3.min(t.values, function(v) {return v.temp;});}),
+        d3.max(temps, function(t) {return d3.max(t.values, function(v) {return v.temp;});})
+    ]).nice();
+
+    // De assen tekenen
+    svg.select(".x.axis")
+        .transition()
+            .duration(1000)
+            .call(xAxis);
+
+    svg.select(".y.axis")
+        .transition()
+            .duration(1000)
+            .call(yAxis);
+
+    // De data binden
+    var temp = svg.selectAll(".temp")
+        .data(temps);
+
+    temp.enter().append("g")
+        .attr("class", "temp");
+
+    temp.append("path")
+        .attr("class", "line")
+        .attr("d", function(d) {return line(d.values);})
+        .style("stroke", function(d) {return color(d.type);});
+
+    temp.append("text")
+        .datum(function(d) {return {type: d.type, value: d.values[d.values.length - 1]};})
+        .attr("x", function(d) {return x(d.value.date) + 3;})
+        .attr("y", function(d) {return y(d.value.temp);})
+        .attr("dy", ".35em")
+        .text(function(d) {return d.type;});
+}
+
+// De functie die wordt aangeroepen om de lijnen te updaten (bij het kiezen uit de dropdown)
 function updateChart(newData) {
     // Maak een array met objecten voor de temperaturen
     // 0: Gem, 1: Min, 2: Max
@@ -224,32 +280,18 @@ function updateChart(newData) {
     temp.enter().append("g")
         .attr("class", "temp");
 
-    if (temp.select("path")[0][0] === null) {
-        temp.append("path")
-            .attr("class", "line")
-            .attr("d", function(d) {return line(d.values);})
-            .style("stroke", function(d) {return color(d.type);});
+    temp.select("path")
+        .transition()
+            .duration(1000)
+            .ease("bounce")
+            .attr("d", function(d) {return line(d.values);});
 
-        temp.append("text")
-            .datum(function(d) {return {type: d.type, value: d.values[d.values.length - 1]};})
-            .attr("x", function(d) {return x(d.value.date) + 3;})
-            .attr("y", function(d) {return y(d.value.temp);})
-            .attr("dy", ".35em")
-            .text(function(d) {return d.type;});
-    }
-    else {
-        temp.select("path")
-            .transition()
-                .duration(1000)
-                .attr("d", function(d) {return line(d.values);});
-
-        temp.select("text")
-            .datum(function(d) {return {type: d.type, value: d.values[d.values.length - 1]};})
-            .transition()
-                .duration(1000)
-                    .attr("x", function(d) {return x(d.value.date) + 3;})
-                    .attr("y", function(d) {return y(d.value.temp);});
-    }
+    temp.select("text")
+        .datum(function(d) {return {type: d.type, value: d.values[d.values.length - 1]};})
+        .transition()
+            .duration(1000)
+                .attr("x", function(d) {return x(d.value.date) + 3;})
+                .attr("y", function(d) {return y(d.value.temp);});
 
     temp.exit().remove();
 }
