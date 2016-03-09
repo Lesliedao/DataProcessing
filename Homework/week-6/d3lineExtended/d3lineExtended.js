@@ -13,7 +13,7 @@
 */
 
 // Afmetingen van de chart
-var margin = {top: 20, bottom: 60, right: 130, left: 50};
+var margin = {top: 20, bottom: 60, right: 150, left: 50};
 var width = 1200 - margin.left - margin.right;
 var height = 600 - margin.top - margin.bottom;
 
@@ -91,6 +91,18 @@ d3.csv("data.csv", function(error, rows) {
             updateChart(dataShown);
         });
 
+    // Update de dataset adhv de aangevinkte checkboxes
+    d3.selectAll(".filter")
+        .on("change", function() {
+            // De dataset wordt alleen uit- of ingefaded, niet weggelaten
+            var opacityTo = this.checked ? 1 : 0;
+            d3.select("." + this.value)
+                .transition()
+                    .duration(750)
+                    .style("opacity", opacityTo);
+
+        });
+
     // Tooltip (Bronnen: http://bl.ocks.org/mbostock/3902569, http://bl.ocks.org/mikehadlow/93b471e569e31af07cd3)
     var focus = svg.append("g")
         .attr("class", "focus")
@@ -144,14 +156,26 @@ d3.csv("data.csv", function(error, rows) {
             var chX = x(d.date);
             var chY;
             // Bepaal welke lijn de crosshair moet volgen adhv de radio buttons
-            if (document.getElementById("chMin").checked) {
-                chY = y(d.Min / 10);
+            if (document.getElementById("chMinimum").checked) {
+                chY = y(d.Minimum / 10);
             }
-            else if (document.getElementById("chGem").checked) {
-                chY = y(d.Gem / 10);
+            else if (document.getElementById("chGemiddelde").checked) {
+                chY = y(d.Gemiddelde / 10);
             }
             else {
-                chY = y(d.Max / 10);
+                chY = y(d.Maximum / 10);
+            }
+
+            // Laat de crosshair en tooltip niet zien als de data niet gevisualiseerd is, ookal is de radio button aangeklikt
+            if (document.getElementById("chMinimum").checked && !document.getElementById("showMinimum").checked ||
+                document.getElementById("chGemiddelde").checked && !document.getElementById("showGemiddelde").checked ||
+                document.getElementById("chMaximum").checked && !document.getElementById("showMaximum").checked) {
+                d3.selectAll(".focus")
+                    .style("opacity", 0);
+            }
+            else {
+                d3.selectAll(".focus")
+                    .style("opacity", 1);
             }
 
             // Verticale component van de crosshair tekenen
@@ -175,14 +199,14 @@ d3.csv("data.csv", function(error, rows) {
                 .text(function() {
                     // Bepaal welke temperatuur in de tooltip verschijnt adhv de radio buttons
                     var degrees;
-                    if (document.getElementById("chMin").checked) {
-                        degrees = d.Min;
+                    if (document.getElementById("chMinimum").checked) {
+                        degrees = d.Minimum;
                     }
-                    else if (document.getElementById("chGem").checked) {
-                        degrees = d.Gem;
+                    else if (document.getElementById("chGemiddelde").checked) {
+                        degrees = d.Gemiddelde;
                     }
                     else {
-                        degrees = d.Max;
+                        degrees = d.Maximum;
                     }
                     return d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + degrees / 10 + "C";
                 });
@@ -191,8 +215,8 @@ d3.csv("data.csv", function(error, rows) {
 
 // Functie die wordt aangeroepen om de eerste lijnen te tekenen (als de pagina geladen wordt)
 function initialChart(newData) {
-    // Maak een array met objecten voor de temperaturen
-    // 0: Gem, 1: Min, 2: Max
+    // Maak een array van arrays met objecten voor de temperaturen
+    // 0: Gemiddelde, 1: Minimum, 2: Maximum
     var temps = color.domain().map(function(name) {
         return {
             type: name,
@@ -226,20 +250,31 @@ function initialChart(newData) {
     var temp = svg.selectAll(".temp")
         .data(temps);
 
-    // Maak voor elke lijn een aparte group aan
+    // Maak voor elke lijn en label een aparte group aan
     temp.enter().append("g")
-        .attr("class", "temp");
+        .attr("class", function(d) {return "temp " + d.type;})
+        .style("opacity", 0)
+        .transition()
+            .duration(750)
+            .style("opacity", function(d) {
+                /*
+                / Sommige browsers onthouden de gekozen opties voor de dropdown, radio buttons en checkboxes bij het verversen,
+                / ookal hebben deze een default optie. Check daarom welke checkboxes zijn aangevinkt bij het
+                / laden van de pagina en laat alleen de aangevinkte data zien.
+                */
+                if (document.getElementById("show" + d.type).checked) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            });
 
     // Teken de lijntjes in de svg container
     temp.append("path")
         .attr("class", "line")
-        .attr("d", "")
-        .style("stroke", function(d) {return color(d.type);})
-        .style("opacity", 0)
-        .transition()
-            .duration(1000)
-            .attr("d", function(d) {return line(d.values);})
-            .style("opacity", 1);
+        .attr("d", function(d) {return line(d.values);})
+        .style("stroke", function(d) {return color(d.type);});
 
     // Plaats de label die bij de lijntjes hoort aan het eind van elke lijn
     temp.append("text")
@@ -247,17 +282,13 @@ function initialChart(newData) {
         .attr("x", function(d) {return x(d.value.date) + 3;})
         .attr("y", function(d) {return y(d.value.temp);})
         .attr("dy", ".35em")
-        .text(function(d) {return d.type;})
-        .style("opacity", 0)
-        .transition()
-            .duration(1000)
-            .style("opacity", 1);
+        .text(function(d) {return d.type;});
 }
 
 // De functie die wordt aangeroepen om de lijnen te updaten (bij het kiezen uit de dropdown)
 function updateChart(newData) {
-    // Maak een array met objecten voor de temperaturen
-    // 0: Gem, 1: Min, 2: Max
+    // Maak een array van arrays met objecten voor de temperaturen
+    // 0: Gemiddelde, 1: Minimum, 2: Maximum
     var temps = color.domain().map(function(name) {
         return {
             type: name,
@@ -293,7 +324,7 @@ function updateChart(newData) {
 
     // Update cycle voor de lijntjes
     temp.enter().append("g")
-        .attr("class", "temp");
+        .attr("class", function(d) {return "temp " + d.type;});
 
     // Animeer het verschuiven van de lijntjes
     temp.select("path")

@@ -12,6 +12,7 @@
     		<h1>Homework 6 D3 Line Extended</h1>
             <h1>Temperaturen in Rotterdam in graden Celsius</h1>
             <div id="yearSelect">
+            <b>Jaar</b><br>
             <select id="dropdown">
                 <option value="2012">2012</option>
                 <option value="2013">2013</option>
@@ -22,9 +23,17 @@
             <div id="crosshairSelect">
             <b>Crosshair volgt</b>
             <form>
-                <input type="radio" name="crosshairFollow" id="chMax" value="Maximum"> Maximum
-                <input type="radio" name="crosshairFollow" id="chGem" value="Gemiddelde" checked> Gemiddelde
-                <input type="radio" name="crosshairFollow" id="chMin" value="Minimum"> Minimum
+                <input type="radio" name="crosshairFollow" id="chMaximum" value="Maximum"> Maximum
+                <input type="radio" name="crosshairFollow" id="chGemiddelde" value="Gemiddelde" checked> Gemiddelde
+                <input type="radio" name="crosshairFollow" id="chMinimum" value="Minimum"> Minimum
+            </form>
+            </div>
+            <div id="dataSelect">
+            <b>Datasets</b>
+            <form>
+                    <input type="checkbox" name="showData" id="showMaximum" class="filter" value="Maximum" checked> Maximum
+                    <input type="checkbox" name="showData" id="showGemiddelde" class="filter" value="Gemiddelde" checked> Gemiddelde
+                    <input type="checkbox" name="showData" id="showMinimum" class="filter" value="Minimum" checked> Minimum
             </form>
             </div>
         </center>

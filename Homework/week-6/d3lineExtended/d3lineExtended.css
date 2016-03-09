@@ -30,7 +30,7 @@ svg {
 }
 
 .focus text {
-    font: 16px sans-serif;
+    font: 18px sans-serif;
     font-weight: bold;
 }
 
@@ -41,15 +41,25 @@ svg {
 }
 
 #yearSelect,
-#crosshairSelect {
+#crosshairSelect,
+#dataSelect {
     display: inline-block;
+    border: 1px solid black;
+    padding: 5px;
+    height: 40px;
+    vertical-align: middle;
 }
 
-#crosshairSelect {
-    vertical-align: middle;
+#crosshairSelect,
+#dataSelect {
+    width: 300px;
+}
+
+#yearSelect {
+    width: 65px;
 }
 
 input {
     display: inline;
-    vertical-align: middle;
+    vertical-align: bottom;
 }
