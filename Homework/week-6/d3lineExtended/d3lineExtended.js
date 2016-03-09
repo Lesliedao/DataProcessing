@@ -247,7 +247,11 @@ function initialChart(newData) {
         .attr("x", function(d) {return x(d.value.date) + 3;})
         .attr("y", function(d) {return y(d.value.temp);})
         .attr("dy", ".35em")
-        .text(function(d) {return d.type;});
+        .text(function(d) {return d.type;})
+        .style("opacity", 0)
+        .transition()
+            .duration(1000)
+            .style("opacity", 1);
 }
 
 // De functie die wordt aangeroepen om de lijnen te updaten (bij het kiezen uit de dropdown)
