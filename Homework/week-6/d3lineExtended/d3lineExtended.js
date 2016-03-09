@@ -233,8 +233,13 @@ function initialChart(newData) {
     // Teken de lijntjes in de svg container
     temp.append("path")
         .attr("class", "line")
-        .attr("d", function(d) {return line(d.values);})
-        .style("stroke", function(d) {return color(d.type);});
+        .attr("d", "")
+        .style("stroke", function(d) {return color(d.type);})
+        .style("opacity", 0)
+        .transition()
+            .duration(1000)
+            .attr("d", function(d) {return line(d.values);})
+            .style("opacity", 1);
 
     // Plaats de label die bij de lijntjes hoort aan het eind van elke lijn
     temp.append("text")
