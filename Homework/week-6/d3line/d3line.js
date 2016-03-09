@@ -55,8 +55,8 @@ d3.csv("data.csv", function(d) {
         avg: (+d.avg) / 10,
         min: +d.min,
         max: +d.max
-    };
-}, function(error, rows) {
+        };
+    }, function(error, rows) {
         // Extent bepaalt het minimum en het maximum. Nice zorgt voor mooiere afkapwaarden.
         x.domain(d3.extent(rows, function(d) {return d.date;})).nice();
         y.domain(d3.extent(rows, function(d) {return d.avg;})).nice();
@@ -76,7 +76,7 @@ d3.csv("data.csv", function(d) {
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis)
-            // Een label aan de y-as hangen
+            // Een naam aan de y-as hangen
             .append("text")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 3)
@@ -95,7 +95,7 @@ d3.csv("data.csv", function(d) {
             .attr("class", "focus")
             .style("display", "none");
 
-        // Crosshair klaarzetten
+        // Crosshair klaarzetten (horizontale en verticale component)
         focus.append("line")
             .attr("id", "crosshairX")
             .attr("class", "crosshair");
@@ -113,56 +113,55 @@ d3.csv("data.csv", function(d) {
             .attr("height", height)
             .on("mouseover", function() {focus.style("display", null);})
             .on("mouseout", function() {focus.style("display", "none");})
-            .on("mousemove", updateTooltip);
+            .on("mousemove", function() {
+                // Dit is de functie voor het maken van de tooltip
 
-        // De functie die wordt aangeroepen als de cursor over de chart beweegt
-        function updateTooltip() {
-            // 0e element is de x-coordinaat
-            var x0 = x.invert(d3.mouse(this)[0]);
-            // Zoek de index bij x0
-            var i = bisectDate(rows, x0);
+                // 0e element is de x-coordinaat
+                var x0 = x.invert(d3.mouse(this)[0]);
+                // Zoek de index bij x0
+                var i = bisectDate(rows, x0);
 
-            // Placeholder voor de datum waarvoor de tooltip verschijnt
-            var d;
-            // Als de index 0 is, laat dan informatie zien van de eerste dag
-            if (i == 0) {
-                d = rows[0];
-            }
-            // Als de index het laatste element is (of hoger vanwege marges), laat dan de laatste dag zien
-            else if (i >= (rows.length - 1)) {
-                d = rows[rows.length - 1];
-            }
-            // Anders (dus dagen ertussen in)
-            else {
-                // Zoek de twee waarden rond de cursor
-                var d0 = rows[i - 1], d1 = rows[i];
+                // Placeholder voor de datum waarvoor de tooltip verschijnt
+                var d;
+                // Als de index 0 is, laat dan informatie zien van de eerste dag
+                // Apart geval omdat index -1 niet bestaat in de else tak
+                if (i == 0) {
+                    d = rows[0];
+                }
+                // Als de index het laatste element is (of hoger vanwege marges), laat dan de laatste dag zien
+                else if (i >= (rows.length - 1)) {
+                    d = rows[rows.length - 1];
+                }
+                // Anders (dus dagen ertussen in)
+                else {
+                    // Zoek de twee waarden rond de cursor
+                    var d0 = rows[i - 1], d1 = rows[i];
 
-                // Bepaal welke van de twee waarden dichter bij de cursor ligt
-                d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-            }
+                    // Bepaal welke van de twee waarden dichter bij de cursor ligt
+                    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+                }
 
-            // Bepaal de x- en y-coordinaat van de crosshair
-            var chX = x(d.date), chY = y(d.avg);
+                // Bepaal de x- en y-coordinaat van de crosshair
+                var chX = x(d.date), chY = y(d.avg);
 
-            // Verticale component van de crosshair tekenen
-            focus.select("#crosshairY")
-                .attr("x1", chX)
-                .attr("x2", chX)
-                .attr("y1", 0)
-                .attr("y2", height);
-            // Horizontale component van de crosshair tekenen
-            focus.select("#crosshairX")
-                .attr("x1", 0)
-                .attr("x2", width)
-                .attr("y1", chY)
-                .attr("y2", chY);
+                // Verticale component van de crosshair tekenen
+                focus.select("#crosshairY")
+                    .attr("x1", chX)
+                    .attr("x2", chX)
+                    .attr("y1", 0)
+                    .attr("y2", height);
+                // Horizontale component van de crosshair tekenen
+                focus.select("#crosshairX")
+                    .attr("x1", 0)
+                    .attr("x2", width)
+                    .attr("y1", chY)
+                    .attr("y2", chY);
 
-            // Laat de datum en gemiddelde temperatuur van die dag zien als een tooltip naast de crosshair
-            focus.select("text")
-                .attr("x", chX + 5)
-                .attr("y", chY)
-                .attr("dy", "-.35em")
-                .text(d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + d.avg + "C");
-        }
-
+                // Laat de datum en gemiddelde temperatuur van die dag zien als een tooltip naast de crosshair
+                focus.select("text")
+                    .attr("x", chX + 5)
+                    .attr("y", chY)
+                    .attr("dy", "-.35em")
+                    .text(d.date.getFullYear() + "/" + (d.date.getMonth() + 1) + "/" + d.date.getDate() + ": " + d.avg + "C");
+            });
 });
