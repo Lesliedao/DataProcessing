@@ -10,6 +10,7 @@
 / Voorbeeldbron 2: http://jsfiddle.net/5JRMt/125/
 / Voorbeeldbron 3: http://bl.ocks.org/d3noob/7030f35b72de721622b8
 / Databron: http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
+/ Colorbrewer: https://github.com/mbostock/d3/tree/master/lib/colorbrewer
 */
 
 // Afmetingen van de chart
