@@ -1,0 +1,195 @@
+Country,Overall,Female,Male,fillKey
+Japan,84,87,80,HIGH
+Spain,83,86,80,HIGH
+Andorra,83,86,79,HIGH
+Singapore,83,85,81,HIGH
+Switzerland,83,85,81,HIGH
+Australia,83,85,80,HIGH
+Italy,83,85,80,HIGH
+San Marino,83,84,83,HIGH
+France,82,85,79,HIGH
+Monaco,82,85,79,HIGH
+Republic of Korea,82,85,78,HIGH
+Iceland,82,84,81,HIGH
+Israel,82,84,81,HIGH
+Canada,82,84,80,HIGH
+Cyprus,82,84,80,HIGH
+Luxembourg,82,84,80,HIGH
+New Zealand,82,84,80,HIGH
+Norway,82,84,80,HIGH
+Sweden,82,84,80,HIGH
+Austria,81,84,79,HIGH
+Greece,81,84,79,HIGH
+Finland,81,84,78,HIGH
+Portugal,81,84,78,HIGH
+Germany,81,83,79,HIGH
+Ireland,81,83,79,HIGH
+Netherlands,81,83,79,HIGH
+United Kingdom,81,83,79,HIGH
+Malta,81,82,79,HIGH
+Slovenia,80,84,77,ABVAVG
+Belgium,80,83,78,ABVAVG
+Chile,80,83,77,ABVAVG
+Denmark,80,82,78,ABVAVG
+Lebanon,80,82,78,ABVAVG
+Nauru,79,83,75,ABVAVG
+Costa Rica,79,81,77,ABVAVG
+United States of America,79,81,76,ABVAVG
+Qatar,79,80,79,ABVAVG
+Barbados,78,81,75,ABVAVG
+Colombia,78,81,75,ABVAVG
+Croatia,78,81,75,ABVAVG
+Czech Republic,78,81,75,ABVAVG
+Cuba,78,80,77,ABVAVG
+Kuwait,78,79,78,ABVAVG
+Maldives,78,79,77,ABVAVG
+Estonia,77,82,72,ABVAVG
+Uruguay,77,81,74,ABVAVG
+Poland,77,81,73,ABVAVG
+Bosnia and Herzegovina,77,80,75,ABVAVG
+Panama,77,80,74,ABVAVG
+Suriname,77,80,74,ABVAVG
+Brunei Darussalam,77,79,76,ABVAVG
+Peru,77,79,76,ABVAVG
+Bahrain,77,78,76,ABVAVG
+United Arab Emirates,77,78,76,ABVAVG
+Argentina,76,80,73,ABVAVG
+Slovakia,76,80,72,ABVAVG
+Venezuela,76,80,72,ABVAVG
+Vietnam,76,80,71,ABVAVG
+Oman,76,79,74,ABVAVG
+Ecuador,76,79,73,ABVAVG
+Cook Islands,76,78,74,ABVAVG
+Montenegro,76,78,74,ABVAVG
+Saudi Arabia,76,78,74,ABVAVG
+Macedonia,76,78,74,ABVAVG
+Tunisia,76,78,74,ABVAVG
+Bahamas,76,78,73,ABVAVG
+Syrian Arab Republic,76,78,73,ABVAVG
+Brazil,75,79,72,ABVAVG
+Saint Lucia,75,79,72,ABVAVG
+Turkey,75,79,72,ABVAVG
+Hungary,75,79,71,ABVAVG
+Thailand,75,79,71,ABVAVG
+Mexico,75,78,73,ABVAVG
+Belize,75,78,72,ABVAVG
+Niue,75,78,72,ABVAVG
+Paraguay,75,78,72,ABVAVG
+Sri Lanka,75,78,72,ABVAVG
+Bulgaria,75,78,71,ABVAVG
+Cabo Verde,75,78,71,ABVAVG
+China,75,77,74,ABVAVG
+Antigua and Barbuda,75,77,73,ABVAVG
+Libya,75,77,73,ABVAVG
+Dominica,75,77,72,ABVAVG
+Serbia,75,77,72,ABVAVG
+Latvia,74,79,69,ABVAVG
+Lithuania,74,79,69,ABVAVG
+Georgia,74,78,71,ABVAVG
+Romania,74,78,71,ABVAVG
+Saint Kitts and Nevis,74,78,71,ABVAVG
+Mauritius,74,78,70,ABVAVG
+Seychelles,74,78,70,ABVAVG
+Honduras,74,77,72,ABVAVG
+Jamaica,74,77,72,ABVAVG
+Nicaragua,74,77,71,ABVAVG
+Albania,74,76,73,ABVAVG
+Iran,74,76,72,ABVAVG
+Jordan,74,76,72,ABVAVG
+Malaysia,74,76,72,ABVAVG
+Saint Vincent and the Grenadines,74,76,72,ABVAVG
+Dominican Republic,74,74,73,ABVAVG
+Grenada,73,77,70,ABVAVG
+Samoa,73,77,70,ABVAVG
+El Salvador,73,77,68,ABVAVG
+Palau,73,75,71,ABVAVG
+Cambodia,73,75,70,ABVAVG
+Belarus,72,78,66,ABVAVG
+Azerbaijan,72,75,70,ABVAVG
+Guatemala,72,75,68,ABVAVG
+Vanuatu,72,74,71,ABVAVG
+Algeria,72,74,70,ABVAVG
+Ukraine,71,76,66,ABVAVG
+Armenia,71,75,67,ABVAVG
+Egypt,71,74,69,ABVAVG
+Trinidad and Tobago,71,74,67,ABVAVG
+Indonesia,71,73,69,ABVAVG
+Morocco,71,73,69,ABVAVG
+Bangladesh,71,72,70,ABVAVG
+Tonga,71,70,74,ABVAVG
+Republic of Moldova,70,75,66,AVG
+Iraq,70,74,67,AVG
+Marshall Islands,70,73,68,AVG
+Fiji,70,73,67,AVG
+Democratic People's Republic of Korea,70,73,66,AVG
+Russian Federation,69,75,63,AVG
+Kyrgyzstan,69,73,66,AVG
+Uzbekistan,69,72,67,AVG
+Philippines,69,72,65,AVG
+Micronesia,69,70,68,AVG
+Tajikistan,69,70,68,AVG
+Solomon Islands,69,70,67,AVG
+Kazakhstan,68,73,63,AVG
+Mongolia,68,72,64,AVG
+Nepal,68,70,67,AVG
+Namibia,68,70,66,AVG
+Tuvalu,68,70,66,AVG
+Bolivia,68,70,65,AVG
+Bhutan,68,69,68,AVG
+Sao Tome and Principe,67,69,65,AVG
+Timor-Leste,67,69,65,AVG
+Kiribati,67,69,64,AVG
+India,66,68,65,AVG
+Lao People's Democratic Republic,66,68,65,AVG
+Myanmar,66,68,64,AVG
+Pakistan,66,67,65,AVG
+Rwanda,65,67,64,AVG
+Ethiopia,65,66,63,AVG
+Turkmenistan,64,68,60,AVG
+Guyana,64,67,60,AVG
+Madagascar,64,66,63,AVG
+Senegal,64,66,63,AVG
+Yemen,64,66,63,AVG
+Eritrea,64,66,61,AVG
+Botswana,64,65,63,AVG
+Gabon,64,65,62,AVG
+Mauritania,63,65,62,AVG
+Sudan,63,65,61,AVG
+United Republic of Tanzania,63,65,61,AVG
+Ghana,63,64,62,AVG
+Haiti,63,64,61,AVG
+Papua New Guinea,62,65,60,AVG
+Liberia,62,63,61,AVG
+Comoros,62,63,60,AVG
+Djibouti,62,63,60,AVG
+Gambia,61,63,60,AVG
+Kenya,61,63,60,AVG
+Afghanistan,61,62,61,AVG
+South Africa,60,64,57,BELAVG
+Malawi,60,61,58,BELAVG
+Uganda,59,61,57,BELAVG
+Zimbabwe,59,61,56,BELAVG
+Congo,59,60,58,BELAVG
+Benin,59,60,57,BELAVG
+Niger,59,59,59,BELAVG
+Burkina Faso,59,59,58,BELAVG
+Togo,58,60,57,BELAVG
+Zambia,58,60,57,BELAVG
+Guinea,58,59,57,BELAVG
+Cameroon,57,58,56,BELAVG
+Mali,57,57,57,BELAVG
+Burundi,56,58,54,BELAVG
+Equatorial Guinea,56,57,55,BELAVG
+South Sudan,56,57,55,BELAVG
+Nigeria,55,55,54,BELAVG
+Somalia,54,56,53,BELAVG
+Guinea-Bissau,54,55,53,BELAVG
+Mozambique,54,55,53,BELAVG
+Côte d'Ivoire,53,54,52,BELAVG
+Swaziland,53,53,53,BELAVG
+Democratic Republic of the Congo,52,54,51,BELAVG
+Chad,52,53,51,BELAVG
+Angola,52,53,50,BELAVG
+Central African Republic,51,52,50,BELAVG
+Lesotho,50,52,48,LOW
+Sierra Leone,46,46,46,LOW
