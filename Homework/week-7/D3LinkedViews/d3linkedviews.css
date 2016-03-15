@@ -1,5 +1,6 @@
 body {
     background-color: #EDEDED;
+    font: 12px sans-serif;
 }
 
 svg {
@@ -9,8 +10,9 @@ svg {
 }
 
 #wrapper {
-    width: 1300px;
+    width: 1100px;
     overflow: hidden;
+    margin-bottom: 1cm;
 }
 
 #map {
