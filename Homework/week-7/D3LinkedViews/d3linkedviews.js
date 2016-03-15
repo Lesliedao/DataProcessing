@@ -45,7 +45,7 @@ var yAxis = d3.svg.axis()
 var tip = d3.tip()
     .attr("class", "tooltip")
     .offset([-10, 0])
-    .html(function(d) {return "<strong>Life expectancy:</strong> " + d.value;});
+    .html(function(d) {return "<strong>Life expectancy (" + d.type + "):</strong> " + d.value;});
 
 barsvg.call(tip);
 
