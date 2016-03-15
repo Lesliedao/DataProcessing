@@ -13,15 +13,90 @@
 	<body>
 		<center>
     		<h1>Homework 7 D3 Linked Views</h1>
+            <h1>Life expectancies by country (WHO)</h1>
+            <div id="map" style="position: relative; height: 550px; width: 1200px">
+            </div>
             <div id="wrapper">
-                <div id="map" style="position: relative; height: 500px; width: 960px">
-                </div>
+                <h2 id="charttitle">Click a country to reveal available info</h2>
                 <div id="barchart" style="position: relative; height: 500px; width: 550px">
                     <h2 id="bartitle"></h2>
                 </div>
-            </div>
+                <div id="table" style="position: relative; height: 500px; width: 750px">
+                    <table>
+                        <tr>
+                            <th>Data</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                        </tr>
+                        <tr>
+                            <td>Quality of support network</td>
+                            <td id="tablevalue0"></td>
+                            <td>Percentage</td>
+                        </tr>
+                        <tr>
+                            <td>Air pollution</td>
+                            <td id="tablevalue1"></td>
+                            <td>Micrograms per cubic metre</td>
+                        </tr>
+                        <tr>
+                            <td>Water quality</td>
+                            <td id="tablevalue2"></td>
+                            <td>Percentage</td>
+                        </tr>
+                        <tr>
+                            <td>Self-reported health</td>
+                            <td id="tablevalue3"></td>
+                            <td>Percentage</td>
+                        </tr>
+                        <tr>
+                            <td>Life satisfaction</td>
+                            <td id="tablevalue4"></td>
+                            <td>Average score</td>
+                        </tr>
+                        <tr>
+                            <td>Employees working very long hours</td>
+                            <td id="tablevalue5"></td>
+                            <td>Percentage</td>
+                        </tr>
+                        <tr>
+                            <td>Time devoted to leisure and personal care</td>
+                            <td id="tablevalue6"></td>
+                            <td>Hours</td>
+                        </tr>
+                    </table>
+                </div>
         </center>
-        <p>Bron: <a href="http://apps.who.int/gho/data/node.main.688?lang=en" target="_blank">World Health Organization</a></p>
+        <h2>Additonal comments</h2>
+        <p>
+            <h4>Quality of support network</h4>
+            Percentage of people who responded positively to the question "If you were in trouble, do you have relatives or friends you can count on to help you whenever you need them, or not?"
+        </p>
+        <p>
+            <h4>Air pollution</h4>
+            Urban-population weighted average of annual concentrations of particulate matters less than 10 microns in diameter (PM10) in the air in residential areas of cities with more than 100,000 residents.
+        </p>
+        <p>
+            <h4>Water quality</h4>
+            Percentage of people who responded "satisfied" to the question "In the city or area where you live, are you satisfied or dissatisfied with the quality of water?"
+        </p>
+        <p>
+            <h4>Self-reported health</h4>
+            Percentage of people aged 15 and over who responded "good" or "very good" to the question "How is your health in general?" with response scale "very good/good/fair/bad/very bad"
+        </p>
+        <p>
+            <h4>Life satisfaction</h4>
+            A weighted-sum of different response categories based on people's rates of their current life relative to the best and worst possible lives for them on a scale from 0 to 10.
+        </p>
+        <p>
+            <h4>Employees working very long hours</h4>
+            Measures the proportion of dependent employed whose usual hours of work per week are 50 hours or more.
+        </p>
+        <p>
+            <h4>Time devoted to leisure and personal care</h4>
+            Measures the amount of hours per day that, on average, full-time employed people spend on leisure and on personal care activities including, but not limited to, entertainment and cultural activities and medical and personal services.
+        </p>
+        <p>Source (map and barchart): <a href="http://apps.who.int/gho/data/node.main.688?lang=en" target="_blank">World Health Organization</a><br>
+        Source (table): <a href="http://stats.oecd.org/Index.aspx?DataSetCode=BLI#" target="_blank">Organization for Economic Co-operation and Development</a></p>
 	</body>
 
 </html>

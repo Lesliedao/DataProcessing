@@ -1,3 +1,7 @@
+body {
+    background-color: #EDEDED;
+}
+
 svg {
     display: block;
     margin-left: auto;
@@ -5,12 +9,12 @@ svg {
 }
 
 #wrapper {
-    width: 1550px;
+    width: 1300px;
     overflow: hidden;
 }
 
 #map {
-    margin-bottom: 3cm;
+    margin-bottom: 2cm;
 }
 
 .datamap {
@@ -18,7 +22,7 @@ svg {
     height: 500px;
 }
 
-#map,
+#table,
 #barchart {
     float: left;
     display: inline-block;
@@ -53,4 +57,23 @@ svg {
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
     border-radius: 2px;
+}
+
+table {
+    border-spacing: 5px;
+    vertical-align: middle;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
 }
