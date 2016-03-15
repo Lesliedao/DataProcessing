@@ -1,0 +1,41 @@
+svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.datamap {
+    width: 960px;
+    height: 500px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    display: none;
+}
+
+.bar.Overall {
+    fill: green;
+}
+
+.bar.Female {
+    fill: pink;
+}
+
+.bar.Male {
+    fill: blue;
+}
+
+.tooltip {
+    line-height: 1;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
