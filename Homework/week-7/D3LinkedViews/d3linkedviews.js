@@ -35,13 +35,14 @@ var xAxis = d3.svg.axis()
 
 var yAxis = d3.svg.axis()
     .scale(y)
+    .ticks(8)
     .orient("left");
 
 // Tooltip die verschijnt bij het hoveren over een bar
 var tip = d3.tip()
     .attr("class", "tooltip")
     .offset([-10, 0])
-    .html(function(d) {return "<strong>Life expectancy:</strong> " + d.value;});
+    .html(function(d) {return "<strong>Levensverwachting:</strong> " + d.value;});
 
 barsvg.call(tip);
 
@@ -92,7 +93,15 @@ d3.json("lifeexpectancy.json", function(error, json) {
         done: function(datamap) {
             datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
                 console.log(geo.id, geo.properties.name);
-                if (geo.id !== "-99" || geo.id !== "GRL") {
+                if (geo.id == "-99" || geo.id == "GRL") {
+                    updateBars({
+                        name: geo.properties.name,
+                        Overall: 0,
+                        Female: 0,
+                        Male: 0
+                    });
+                }
+                else {
                     updateBars(json[geo.id]);
                 }
             });
@@ -101,16 +110,16 @@ d3.json("lifeexpectancy.json", function(error, json) {
 
     map.legend({
         // Titel van de legenda
-        legendTitle: "Legend",
+        legendTitle: "Legenda",
         // Label voor de default fill (waar geen data voor is)
-        defaultFillName: "No data",
+        defaultFillName: "Geen gegevens",
         // Custom labels voor de fill kleuren (waar wel data voor is)
         labels: {
-            LOW: "50 and below",
-            BELAVG: "50 to 60",
-            AVG: "60 to 70",
-            ABVAVG: "70 to 80",
-            HIGH: "80 and above"
+            LOW: "50 en lager",
+            BELAVG: "50 tm 60",
+            AVG: "60 tm 70",
+            ABVAVG: "70 tm 80",
+            HIGH: "80 en hoger"
         }
     });
 
@@ -120,14 +129,14 @@ d3.json("lifeexpectancy.json", function(error, json) {
         .call(xAxis);
 
     barchart.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
+        .attr("class", "y axis");
 
-    // updateBars(json, "SLE");
 });
 
+var oldY = [height, height, height], oldHeight = [0, 0, 0];
 function updateBars(object) {
-    console.log(object);
+    d3.select("#bartitle").text(object.name);
+
     var classes = ["Overall", "Female", "Male"];
     var newData = [];
 
@@ -156,15 +165,21 @@ function updateBars(object) {
     bars.enter().append("rect")
         .attr("class", function(d) {return "bar " + d.type;})
         .attr("x", function(d) {return x(d.type);})
-        .attr("y", height)
-        .attr("height", 0)
+        .attr("y", function(d, i) {return oldY[i];})
+        .attr("height", function(d, i) {return oldHeight[i];})
         .attr("width", x.rangeBand())
         .on("mouseover", tip.show)
         .on("mouseout", tip.hide)
         .transition()
             .duration(750)
-            .attr("y", function(d) {return y(d.value);})
-            .attr("height", function(d) {return height - y(d.value);});
+            .attr("y", function(d, i) {
+                oldY[i] = y(d.value);
+                return y(d.value);
+            })
+            .attr("height", function(d, i) {
+                oldHeight[i] = height - y(d.value);
+                return height - y(d.value);
+            });
 
     bars.exit().remove();
 
