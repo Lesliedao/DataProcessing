@@ -42,7 +42,7 @@ var xAxis = d3.svg.axis()
 
 var yAxis = d3.svg.axis()
     .scale(y)
-    .ticks(8)
+    .ticks(20)
     .orient("left");
 
 // Tooltip die verschijnt bij het hoveren over een bar
