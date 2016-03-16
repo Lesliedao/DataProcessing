@@ -4,7 +4,11 @@
 / D3 Linked Views
 /
 / Maakt meerdere gelinkte visualisaties die interactief zijn.
-/ Databron: https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy
+/ Klikken op de datamap updatet de barchart en tabel met nieuwe data (indien beschikbaar).
+/
+/ Databron 1: http://apps.who.int/gho/data/node.main.688?lang=en
+/ Databron 2: http://stats.oecd.org/Index.aspx?DataSetCode=BLI#
+/ Colorbrewer: https://github.com/mbostock/d3/tree/master/lib/colorbrewer
 */
 
 // Afmetingen van de barchart
@@ -49,6 +53,9 @@ var tip = d3.tip()
 
 barsvg.call(tip);
 
+// Kleuren van colorbrewer
+var colors = colorbrewer.Greens[5];
+
 // Laad eerst de csv in zodat deze aangeroepen kan worden bij een klik op de kaart
 d3.csv("betterlifeindex.csv", function(error, rows) {
     if (error) throw error;
@@ -57,37 +64,38 @@ d3.csv("betterlifeindex.csv", function(error, rows) {
     d3.json("lifeexpectancy.json", function(errorjson, json) {
         if (errorjson) throw errorjson;
 
-        // Missende landen toevoegen
-        json.GRL = {"name": "Greenland", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.GUF = {"name": "French Guiana", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.PSE = {"name": "West Bank", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.CIV = {"name": "Ivory Coast", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.COG = {"name": "Republic of the Congo", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.TZA = {"name": "Tanzania", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.LAO = {"name": "Laos", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.PRK = {"name": "North Korea", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json.ATF = {"name": "French Southern and Antarctic Lands", "Overall": "NA", "Female": "NA", "Male": "NA"};
-        json["-99"] = {"name": "Missing codes", "Overall": "NA", "Female": "NA", "Male": "NA"};
+        // Missende landen toevoegen, zodat grijze gebieden ook een popup krijgen
+        var missing = {"GRL": "Greenland", "GUF": "French Guiana", "PSE": "Palestine",
+            "CIV": "Ivory Coast", "COG": "Republic of the Congo", "TZA": "Tanzania",
+            "LAO": "Laos", "PRK": "North Korea", "ATF": "French Southern and Antarctic Lands",
+            "FLK": "Falkland Islands", "PRI": "Puerto Rico", "ESH": "Western Sahara",
+            "TWN": "Taiwan", "NCL": "New Caledonia", "-99": "Missing codes"};
+
+        for (key in missing) {
+            var cobj = {"Overall": "NA", "Female": "NA", "Male": "NA"};
+            cobj.name = missing.key;
+            json[key] = cobj;
+        }
 
         // Maak de datamap aan
         var map = new Datamap({
             // Het HTML element voor de map heeft de id "map"
             element: document.getElementById("map"),
-            // De scope is de hele wereld (in eerste instantie)
+            // De scope is de hele wereld
             scope: 'world',
             // De kleuren die geassocieerd worden met de keys
             fills: {
-                LOW: "#edf8e9",
-                BELAVG: "#bae4b3",
-                AVG: "#74c476",
-                ABVAVG: "#31a354",
-                HIGH: "#006d2c",
+                LOW: colors[0],
+                BELAVG: colors[1],
+                AVG: colors[2],
+                ABVAVG: colors[3],
+                HIGH: colors[4],
                 defaultFill: "#8F8F8F"
             },
-            // Schaal de kaart
+            // Schaal en verschuif de kaart
             setProjection: function(element) {
-                var projection = d3.geo.equirectangular()
-                    .center([40, 12])
+                var projection = d3.geo.mercator()
+                    .center([40, 10])
                     .rotate([0, 0])
                     .scale(175)
                     .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
@@ -97,7 +105,7 @@ d3.csv("betterlifeindex.csv", function(error, rows) {
 
                 return {path: path, projection: projection};
             },
-            // De data is de ingeladen json
+            // De data is de ingeladen json met de missende waarden
             data: json,
             geographyConfig: {
                 // Geef het gehighlighte land een zwarte border
@@ -112,15 +120,14 @@ d3.csv("betterlifeindex.csv", function(error, rows) {
             // Event binden aan het klikken op een land
             done: function(datamap) {
                 datamap.svg.selectAll('.datamaps-subunit').on('click', function(geo) {
-                    // Als een land zonder data wordt aangeklikt:
-                    if (geo.id == "-99" || geo.id == "GRL" || geo.id == "GUF" || geo.id == "PSE" || geo.id == "CIV" ||
-                        geo.id == "COG" || geo.id == "TZA" || geo.id == "LAO" || geo.id == "PRK" || geo.id == "ATF") {
+                    // Als een land zonder data voor de barchart wordt aangeklikt:
+                    if (missing.hasOwnProperty(geo.id)) {
                         // Zet de y-as uit
                         d3.select(".y.axis").transition()
                             .duration(750)
                             .style("opacity", 0);
 
-                        // Maak een custom object met waarden 0
+                        // Maak een custom object met waarden 0 om de bars 'uit te faden'
                         updateBars({
                             name: geo.properties.name,
                             Overall: 0,
@@ -129,7 +136,7 @@ d3.csv("betterlifeindex.csv", function(error, rows) {
                         });
                     }
                     else {
-                        // Zet de y-as weer aan als deze uit was gezet
+                        // Zet de y-as aan als er data is voor de barchart
                         d3.select(".y.axis").transition()
                             .duration(750)
                             .style("opacity", 1);
@@ -140,11 +147,11 @@ d3.csv("betterlifeindex.csv", function(error, rows) {
 
                     // Pak data van het land uit de csv
                     var tableinfo = rows.filter(function(d) {return d.LOCATION === geo.id;});
-                    // Als het land in de csv voorkomt, geef de array mee
+                    // Als het land in de csv voorkomt, geef de array mee om de tabel te updaten
                     if (tableinfo.length !== 0) {
                         updateTable(tableinfo);
                     }
-                    // Anders geef een custom array mee met waarden "NA"
+                    // Geef anders een custom array mee met waarden "NA"
                     else {
                         var tableNA = ["NA", "NA", "NA", "NA", "NA", "NA", "NA"].map(function(d) {return {Country: geo.properties.name, Value: d};});
                         updateTable(tableNA);
@@ -161,15 +168,15 @@ d3.csv("betterlifeindex.csv", function(error, rows) {
             defaultFillName: "No data",
             // Custom labels voor de fill kleuren (waar wel data voor is)
             labels: {
-                LOW: "50 and below",
-                BELAVG: "50 to 60",
-                AVG: "60 to 70",
-                ABVAVG: "70 to 80",
-                HIGH: "80 and above"
+                LOW: "0-50",
+                BELAVG: "51-60",
+                AVG: "61-70",
+                ABVAVG: "71-80",
+                HIGH: "81+"
             }
         });
 
-        // Roep de initiele x-as aan
+        // Roep de x-as aan
         barchart.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
@@ -182,11 +189,6 @@ d3.csv("betterlifeindex.csv", function(error, rows) {
             .call(yAxis);
     });
 });
-
-// var countries = Datamap.prototype.worldTopo.objects.world.geometries;
-// for (var i = 0; i < countries.length; i++) {
-//     console.log(countries[i].id, countries[i].properties.name);
-// }
 
 // Containers voor de oude waarden van y en height voor transitions
 var oldY = [height, height, height], oldHeight = [0, 0, 0];

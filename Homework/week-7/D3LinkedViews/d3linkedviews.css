@@ -63,7 +63,10 @@ svg {
 
 table {
     border-spacing: 5px;
-    vertical-align: middle;
+}
+
+#table {
+    margin-top: 10%;
 }
 
 table, th, td {
