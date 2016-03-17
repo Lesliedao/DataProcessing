@@ -16,6 +16,9 @@ svg {
 }
 
 #map {
+    position: relative;
+    height: 550px;
+    width: 1150px;
     margin-bottom: 2cm;
 }
 
@@ -39,6 +42,12 @@ svg {
 
 .x.axis path {
     display: none;
+}
+
+#barchart {
+    position: relative;
+    height: 500px;
+    width: 550px;
 }
 
 .bar.Overall {
@@ -66,6 +75,9 @@ table {
 }
 
 #table {
+    position: relative;
+    height: 300px;
+    width: 550px;
     margin-top: 10%;
 }
 
